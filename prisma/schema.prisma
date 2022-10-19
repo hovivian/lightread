@@ -11,7 +11,32 @@ datasource db {
 }
 
 model User {
+  id             Int        @id @default(autoincrement())
+  email          String     @unique
+  passwordHash   String
+  bookReview     BookReview?
+  toReadList     ToReadList?
+}
+
+model ToReadList {
   id           Int        @id @default(autoincrement())
-  email        String     @unique
-  passwordHash String
+  book         Book[]
+  user         User       @relation(fields: [userId], references: [id])
+  userId       Int        @unique
+}
+
+model Book {
+  id               Int             @id @default(autoincrement())
+  toReadList       ToReadList?     @relation(fields: [toReadListId], references: [id])
+  toReadListId     Int?            @unique
+  bookReview       BookReview[]
+}
+
+model BookReview {
+  id           Int              @id @default(autoincrement())
+  createdAt    DateTime         @default(now())
+  book         Book             @relation(fields: [bookId], references: [id])
+  bookId       Int              @unique
+  user         User             @relation(fields: [userId], references: [id])
+  userId       Int              @unique
 }

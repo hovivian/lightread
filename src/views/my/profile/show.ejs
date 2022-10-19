@@ -1,0 +1,38 @@
+<%- contentFor('styles') %>
+<%- contentFor('scripts') %>
+<script>
+
+</script>
+
+<%- contentFor('body') %>
+<div id="pages-my-profile-show" class="container d-flex flex-column bg-primary">
+  <div id="profile-title" class="bg-info">
+    <h1 class="text-center">My profile </h1>
+  </div>
+  <div id="profile-body" class="bg-success d-flex">
+    <div class="">
+      <img id="profile-pic" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile-pic">
+    </div>
+    <div class="flex-grow-1">
+      <p>Username:</p>
+      <p>Email:</p>
+    </div>
+  </div>
+  <div id="profile-content" class="d-flex justify-content-around">
+    <div class="bg-warning">
+      <h2>To-read List</h2>
+      <div id="toreadlist-section">
+        <ul id="toreadlist">
+            <li><p>Harry Potter</p></li>
+            <li><p>Lord Of The Flies</p></li>
+            <li><p>Rich Dad, Poor Dad</p></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bg-danger">
+      <h2>My Book Reviews</h2>
+      <div id="my-bookreviews"></div>
+    </div>
+</div>
+</div>
