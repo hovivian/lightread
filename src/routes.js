@@ -16,8 +16,19 @@ router.get('/api/lightread', (await import('./controllers/api/lightread/index.js
 // API | LIBRARY
 router.get('/api/lightread/library', (await import('./controllers/api/lightread/library.js')).default)
 
-// API | MY PROFILE | AUTH REQUIRED (BOOK REVIEW, TO-READ LIST)
+// API | MY PROFILE | AUTH REQUIRED
 router.get('/api/my/profile/show', (await import('./controllers/api/my/profile/show.js')).default)
+
+// API |  TO-READ LIST | MY PROFILE | AUTH REQUIRED
+router.get('/api/my/toreadlist/show',(await import('./controllers/api/my/profile/show.js')).default)
+// router.route('/').post(createTask);
+// router.route('/:id').put(updateTask);
+// router.route('/:id').delete(deleteTask);
+// router.route('/:id').get(getSingleTask);
+// router.route('/').get(getAllTasks);
+
+// API |  BOOK REVIEW | MY PROFILE | AUTH REQUIRED
+
 
 // API | NOT FOUND
 router.use('/api', (await import('./controllers/api/not-found.js')).default)
@@ -35,8 +46,13 @@ router.get('/lightread', (await import('./controllers/pages/lightread/index.js')
 // PAGES | LIBRARY
 router.get('/lightread/library', (await import('./controllers/pages/lightread/library.js')).default)
 
-// PAGES | MY PROFILE | AUTH REQUIRED (BOOK REVIEW, TO-READ LIST)
+// PAGES | MY PROFILE | AUTH REQUIRED
 router.get('/lightread/my/profile', (await import('./controllers/pages/my/profile/show.js')).default)
+
+// PAGE |  TO-READ LIST @ MY PROFILE | AUTH REQUIRED
+router.get('/lightread/my/profile/toreadlist', (await import('./controllers/pages/my/toreadlist/show.js')).default)
+
+// PAGE |  BOOK REVIEW @ MY PROFILE | AUTH REQUIRED
 
 // PAGES | NOT FOUND
 router.use((await import('./controllers/pages/not-found.js')).default)

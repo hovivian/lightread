@@ -1,0 +1,73 @@
+<%- contentFor('styles') %>
+<%- contentFor('scripts') %>
+<script>
+const id = window.location.pathname.split('/').reverse()[0]
+
+const generateTitle = ({ isLoading, toreadlist } = {}) => {
+  if (isLoading) return `<div class="text-center">Loading...</div>`
+  if (!toreadlist) return `<h1 class="text-center mb-3">Wishlist ${id} Not Found!</h1>`
+
+  return `<h1 class="text-center mb-3">Wishlist ${id}</h1>`
+}
+
+const generateWishlist = ({ isLoading, toreadlist } = {}) => {
+  if (isLoading || !toreadlist) return ''
+
+  return `
+    <div class="row">
+      <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="card-title mb-2">${toreadlist.title}</h5>
+            <p class="card-text mb-2">${toreadlist.description}</p>
+
+            <div>
+              <a href="/toreadlists/${id}/edit" class="btn btn-primary btn-sm">Edit</a>
+              <button id="delete-toreadlist" class="btn btn-danger btn-sm">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+const generatePage = (info) => {
+  const $page = $('#pages-toreadlists-show')
+  const $title = generateTitle(info)
+  const $toreadlist = generateWishlist(info)
+
+  $page.html('').append($title).append($toreadlist)
+}
+
+const getWishlist = () => {
+  axios({
+    method: 'GET',
+    url: `/api/toreadlists/${id}`
+  }).then((resp) => {
+    generatePage({ toreadlist: resp.data })
+  }).catch((err) => {
+    generatePage()
+  })
+}
+
+const handleDelete = (e) => {
+  $(e.currentTarget).attr('disabled', true)
+
+  axios({
+    method: 'DELETE',
+    url: `/api/toreadlists/${id}`
+  }).then((resp) => {
+    window.location.href = '/lightread/my/profile'
+  })
+}
+
+$(document).ready(() => {
+  generatePage({ isLoading: true })
+  getWishlist()
+  $('#pages-my-toreadlist-show').on('click', '#delete-toreadlist', handleDelete)
+})
+</script>
+
+<%- contentFor('body') %>
+<div id="pages-my-toreadlist-show" class="container"></div>

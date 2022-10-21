@@ -3,7 +3,8 @@
 <script>
 const generateForm = ({ user, errors } = {}) => {
   return `
-    <div class="row">
+    <div class="row" style="margin-right: 0px";
+>
       <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
         <form id="signup-form">
           <div class="mb-3">
@@ -84,4 +85,20 @@ $(document).ready(() => {
 </script>
 
 <%- contentFor('body') %>
-<div id="pages-auth-signup" class="container"></div>
+<div id="signup-body" class="d-flex justify-content-center ">
+  <div id="welcome-msg" class="d-flex flex-column justify-content-center align-items-center">
+    <div id="signup-title">
+      <h1>Don't be shy!</h1>
+      <h1>Let's be book buddies.</h1>
+    </div>
+    <div id="signup-features">
+      <p>With LightRead, you'll be able to:</p>
+      <ul>
+        <li><p>&#10003 Post book reviews</p></li>
+        <li><p>&#10003 Read other users' book reviews</p></li>
+        <li><p>&#10003 Search for books and add them to your to-read list</p></li>
+      </ul>
+    </div>
+    </div>
+    <div id="pages-auth-signup"></div>
+</div>

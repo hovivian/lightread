@@ -1,14 +1,88 @@
 <%- contentFor('styles') %>
 <%- contentFor('scripts') %>
 <script>
+const generateTitle = () => {
+    return `<h1 class="text-center mb-3">Search The Library</h1>`
+  }
+
+const generateSearchBar = () => {
+    return `
+  <div class="row">
+      <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+        <form id="search-book-form">
+        <label for="search-txt">
+          <input type="text" name="search-txt" id="search" placeholder="Search">
+        </label>
+          <button type="submit" id="submitSearch">Search</button>
+      </form>
+      </div>
+    </div>
+    `
+  }
+
+const generatePage = (info) => {
+  const $page = $('#search-bar-container')
+  const $title = generateTitle(info)
+  const $searchBar = generateSearchBar(info)
+
+  $page.html('').append($title).append($searchBar)
+  }
+
+const results = () => {
+  return
+  `<div class="search-result">
+    <img src="${imgurl}">
+    <button type="submit" id="addToReadList">Add To To-read List</button>
+    <div class="description">
+      <h1>${title}</h1>
+      <p>Author:${author}</p>
+      <div>
+        ${desc}
+      </div>
+    </div>
+  `
+  $('.search-result').on('submit', '??', handleAddToReadList);
+}
+
+const handleAddToReadList = () => {
+
+}
+
+const generateResults = (data) => {
+  const $searchResultsContainer = $('#search-results-container')
+  const $results = Results()
+
+  $searchResultsContainer('').append($results)
+}
+
+const handleSubmit = (e) => {
+  e.preventDefault()
+  $('#search-book-form button[type="submit"]').attr('disabled', true)
+
+  const query = new FormData(e.currentTarget)
+
+  axios({
+    method: 'GET',
+    url: `https://www.googleapis.com/books/v1/volumes?q=${query}&key=AIzaSyBfA2wBiAH5CQ-mTdgi143wMiH5zexb870`,
+  }).then((resp) => {
+    let data = resp.data;
+    results(data)
+  }).catch((err) => {
+    generatePage({
+      errors: err.response.data
+    })
+  })
+}
+
+$(document).ready(() => {
+  generatePage()
+  $('#search-bar-container').on('submit', '#search-book-form', handleSubmit);
+})
+
 </script>
 
 <%- contentFor('body') %>
-<div id="pages-lightread-library" class="container mt-5 mb-5"> <h1 class="text-center">Search The Library</h1>
-  <div class="input-group d-flex justify-content-center">
-    <div class="form-outline">
-      <input type="search" id="form1" class="form-control" placeholder="Search"/>
-    </div>
-    <button type="button" class="btn btn-primary">search </button>
-  </div>
+<div id="pages-lightread-library" class="container mt-5 mb-5">
+  <div id="search-bar-container"></div>
+  <div id="search-results-container"></div>
 </div>

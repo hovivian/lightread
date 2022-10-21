@@ -1,7 +1,7 @@
 import prisma from '../../_helpers/prisma.js'
 import handleErrors from '../../_helpers/handle-errors.js'
 
-const controllersPagesLightReadBookReviews = async (req, res) => {
+const controllersPagesLightReadBookReviews = async () => {
   try {
     // Filters
     const q = req.query.q || ''
@@ -13,7 +13,6 @@ const controllersPagesLightReadBookReviews = async (req, res) => {
     const page = Number(req.query.page || '1')
     const skip = (page - 1) * take
 
-    // Common Where Query
     const where = {
       OR: [
         {
@@ -28,8 +27,8 @@ const controllersPagesLightReadBookReviews = async (req, res) => {
       ]
     }
 
-    const totalWishlists = await prisma.wishlist.count({ where })
-    const foundWishlists = await prisma.wishlist.findMany({
+    const totalBookReviews = await prisma.bookReview.count({ where })
+    const foundBookReviews = await prisma.bookReview.findMany({
       take,
       skip,
       where,
@@ -39,10 +38,10 @@ const controllersPagesLightReadBookReviews = async (req, res) => {
     })
 
     return res.status(200).json({
-      wishlists: foundWishlists,
-      meta: { currentPage: page, totalPages: Math.ceil(totalWishlists / take) }
+      bookReviews: foundBookReviews,
+      meta: { currentPage: page, totalPages: Math.ceil(totalBookReviews / take) }
     })
-  } catch (err) {
+    } catch (err) {
     return handleErrors(res, err)
   }
 }

@@ -1,11 +1,16 @@
 @import 'node_modules/bootstrap/scss/bootstrap';
 
+body {
+background-color: #DFD3C3;
+}
+
 #footer {
 	position: fixed;
 	bottom: 0;
 	width: 100%;
 	height: 50px;
-	background: rgb(205, 206, 208);
+	background: #7D6E83;
+	color:white;
 }
 
 #profile-pic {
@@ -19,4 +24,21 @@
 
 #index-header {
 	width: 600px;
+}
+
+#pages-auth-signup {
+	background-color: white;
+	float: right;
+	width: 50%;
+	height: calc(100vh - 60px);
+}
+
+#welcome-msg {
+	float: left;
+	width: 50%;
+	height: calc(100vh - 60px);
+}
+
+#signup-features li {
+	list-style: none;
 }
