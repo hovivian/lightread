@@ -5,6 +5,43 @@ const generateTitle = () => {
     return `<h1 class="text-center mb-3">Search The Library</h1>`
   }
 
+const handleAddToReadList = (e) => {
+  e.preventDefault();
+  $('.search-result button[type="submit"]').attr('disabled', true);
+
+  axios({
+    method: 'POST',
+    url: ``,
+  }).then((resp) => {
+
+  }).catch((err) => {
+
+  })
+}
+
+const results = (data) => {
+  return
+  `<div class="search-result">
+    <img src="${imgUrl}">
+    <button type="submit" id="addToReadList">Add To To-read List</button>
+    <div class="description">
+      <h1>${title}</h1>
+      <p>Author:${author}</p>
+      <div>
+        ${desc}
+      </div>
+    </div>
+  `
+  $('.search-result').on('submit', '??', handleAddToReadList);
+}
+
+const generateResults = (data) => {
+  const $searchResultsContainer = $('#search-results-container');
+  const $results = Results();
+
+  $searchResultsContainer('').append($results);
+}
+
 const generateSearchBar = () => {
     return `
   <div class="row">
@@ -21,45 +58,34 @@ const generateSearchBar = () => {
   }
 
 const generatePage = (info) => {
-  const $page = $('#search-bar-container')
-  const $title = generateTitle(info)
-  const $searchBar = generateSearchBar(info)
+  const $page = $('#search-bar-container');
+  const $title = generateTitle(info);
+  const $searchBar = generateSearchBar(info);
 
-  $page.html('').append($title).append($searchBar)
+  $page.html('').append($title).append($searchBar);
   }
 
-const results = () => {
-  return
-  `<div class="search-result">
-    <img src="${imgurl}">
-    <button type="submit" id="addToReadList">Add To To-read List</button>
-    <div class="description">
-      <h1>${title}</h1>
-      <p>Author:${author}</p>
-      <div>
-        ${desc}
-      </div>
-    </div>
-  `
-  $('.search-result').on('submit', '??', handleAddToReadList);
+const bookData = (data) => {
+  data.forEach(book => {
+    let title = book.volumeInfo.title
+
+    let author = ""
+    if (book.volumeInfo.authors != undefined) {
+      author = book.volumeInfo.authors
+    } else  author = "N/A"
+
+    let desc = book.volumeInfo.description
+
+    let imgUrl = book.volumeInfo.imageLinks.thumbnail
+  })
 }
 
-const handleAddToReadList = () => {
-
-}
-
-const generateResults = (data) => {
-  const $searchResultsContainer = $('#search-results-container')
-  const $results = Results()
-
-  $searchResultsContainer('').append($results)
-}
 
 const handleSubmit = (e) => {
-  e.preventDefault()
-  $('#search-book-form button[type="submit"]').attr('disabled', true)
+  e.preventDefault();
+  $('#search-book-form button[type="submit"]').attr('disabled', true);
 
-  const query = new FormData(e.currentTarget)
+  const query = new FormData(e.currentTarget);
 
   axios({
     method: 'GET',
@@ -75,10 +101,9 @@ const handleSubmit = (e) => {
 }
 
 $(document).ready(() => {
-  generatePage()
+  generatePage();
   $('#search-bar-container').on('submit', '#search-book-form', handleSubmit);
 })
-
 </script>
 
 <%- contentFor('body') %>
