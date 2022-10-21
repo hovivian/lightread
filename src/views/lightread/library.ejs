@@ -1,98 +1,81 @@
 <%- contentFor('styles') %>
 <%- contentFor('scripts') %>
 <script>
-const generateTitle = () => {
-    return `<h1 class="text-center mb-3">Search The Library</h1>`
-  }
-
-const handleAddToReadList = (e) => {
-  e.preventDefault();
+const handleAddToReadList = () => {
   $('.search-result button[type="submit"]').attr('disabled', true);
 
   axios({
     method: 'POST',
-    url: ``,
+    url: `/api/my/to-read-list`,
+    data: {
+      bookId: $(e.currentTarget).data('book-id'),
+      title: $(e.currentTarget).data('title'),
+      description: $(e.currentTarget).data('description'),
+    }
   }).then((resp) => {
-
+    $('.search-result button[type="submit"]').text('Added').addClass('added');
   }).catch((err) => {
-
+    if (err.response.status === 401) window.location.href = '/login'
+  }).finally(() => {
+    $('.search-result button[type="submit"]').attr('disabled', false);
   })
 }
 
-const results = (data) => {
-  return
-  `<div class="search-result">
-    <img src="${imgUrl}">
-    <button type="submit" id="addToReadList">Add To To-read List</button>
-    <div class="description">
-      <h1>${title}</h1>
-      <p>Author:${author}</p>
-      <div>
-        ${desc}
+const results = (books) => {
+  return books.map((book) => {
+    return  `
+      <div class="search-result">
+        <img src="${book.imgUrl}">
+        <button
+          class="addToReadList"
+          type="button"
+          data-book-id="${book.id}"
+          data-book-title="${book.title}"
+          data-book-description="${book.description}"
+        >Add To To-read List</button>
+        <div class="description">
+          <h1>${book.title}</h1>
+          <p>Author:${book.author}</p>
+          <div>${book.desc}</div>
+        </div>
       </div>
-    </div>
-  `
-  $('.search-result').on('submit', '??', handleAddToReadList);
-}
-
-const generateResults = (data) => {
-  const $searchResultsContainer = $('#search-results-container');
-  const $results = Results();
-
-  $searchResultsContainer('').append($results);
-}
-
-const generateSearchBar = () => {
-    return `
-  <div class="row">
-      <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-        <form id="search-book-form">
-        <label for="search-txt">
-          <input type="text" name="search-txt" id="search" placeholder="Search">
-        </label>
-          <button type="submit" id="submitSearch">Search</button>
-      </form>
-      </div>
-    </div>
     `
-  }
-
-const generatePage = (info) => {
-  const $page = $('#search-bar-container');
-  const $title = generateTitle(info);
-  const $searchBar = generateSearchBar(info);
-
-  $page.html('').append($title).append($searchBar);
-  }
-
-const bookData = (data) => {
-  data.forEach(book => {
-    let title = book.volumeInfo.title
-
-    let author = ""
-    if (book.volumeInfo.authors != undefined) {
-      author = book.volumeInfo.authors
-    } else  author = "N/A"
-
-    let desc = book.volumeInfo.description
-
-    let imgUrl = book.volumeInfo.imageLinks.thumbnail
-  })
+  }).join('')
 }
 
+const generateResults = (books) => {
+  const $searchResultsContainer = $('#search-results-container');
+  const $results = results(books);
+  $searchResultsContainer.html('').append($results);
+}
+
+const bookData = (books) => {
+  return books.map((book) => {
+    return {
+      id: book.volumeInfo.id,
+      title: book.volumeInfo.title,
+      desc: book.volumeInfo.description,
+      imgUrl: book.volumeInfo.imageLinks.thumbnail,
+      author: book.volumeInfo?.authors?.[0] || 'N/A'
+    }
+  })
+}
 
 const handleSubmit = (e) => {
   e.preventDefault();
-  $('#search-book-form button[type="submit"]').attr('disabled', true);
 
-  const query = new FormData(e.currentTarget);
+  $('#search-book-form button[type="submit"]').attr('disabled', true);
+  const query = parseFormData(new FormData(e.currentTarget));
 
   axios({
     method: 'GET',
-    url: `https://www.googleapis.com/books/v1/volumes?q=${query}&key=AIzaSyBfA2wBiAH5CQ-mTdgi143wMiH5zexb870`,
+    url: `https://www.googleapis.com/books/v1/volumes`,
+    params: {
+      ...query,
+      key: 'AIzaSyBfA2wBiAH5CQ-mTdgi143wMiH5zexb870'
+    }
   }).then((resp) => {
-    let data = resp.data;
-    results(data)
+    generateResults(bookData(resp.data))
   }).catch((err) => {
     generatePage({
       errors: err.response.data
@@ -100,9 +83,35 @@ const handleSubmit = (e) => {
   })
 }
 
+const generateTitle = () => {
+  return `<h1 class="text-center mb-3">Search The Library</h1>`
+}
+
+const generateSearchBar = (info) => {
+  return `
+    <div class="row">
+      <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+        <form id="search-book-form">
+          <input type="text" name="q" id="search" placeholder="Search">
+          <button type="submit" id="submitSearch">Search</button>
+        </form>
+      </div>
+    </div>
+  `
+}
+
+const generatePage = (info) => {
+  const $page = $('#search-bar-container');
+  const $title = generateTitle();
+  const $searchBar = generateSearchBar(info);
+
+  $page.html('').append($title).append($searchBar);
+}
+
 $(document).ready(() => {
   generatePage();
   $('#search-bar-container').on('submit', '#search-book-form', handleSubmit);
+  $('#search-results-container').on('click', '.addToReadList', handleAddToReadList);
 })
 </script>
 
