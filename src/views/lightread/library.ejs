@@ -1,6 +1,7 @@
 <%- contentFor('styles') %>
 <%- contentFor('scripts') %>
 <script>
+
 const handleAddToReadList = () => {
   $('.search-result button[type="submit"]').attr('disabled', true);
 
@@ -24,47 +25,60 @@ const handleAddToReadList = () => {
 const results = (books) => {
   return books.map((book) => {
     return  `
-      <div class="search-result">
-        <img src="${book.imgUrl}">
+      <div class="search-result d-flex">
+        <div class="book-img d-flex flex-column">
+        <img class="mb-3" src="${book.imgUrl}">
         <button
-          class="addToReadList"
+          class="addtolist-btn"
           type="button"
           data-book-id="${book.id}"
           data-book-title="${book.title}"
           data-book-description="${book.description}"
-        >Add To To-read List</button>
-        <div class="description">
+        >📖 Add To To-Read List</button>
+        </div>
+
+        <div class="book-info">
           <h1>${book.title}</h1>
-          <p>Author:${book.author}</p>
-          <div>${book.desc}</div>
+          <p>Author: ${book.author}</p>
+          <div class="mb-3">${book.desc}</div>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Read More</button>
         </div>
       </div>
+
     `
-  }).join('')
+  }).join('');
 }
 
 const generateResults = (books) => {
+  console.log('generate results!!!');
   const $searchResultsContainer = $('#search-results-container');
   const $results = results(books);
   $searchResultsContainer.html('').append($results);
 }
 
 const bookData = (books) => {
-  return books.map((book) => {
-    return {
-      id: book.volumeInfo.id,
-      title: book.volumeInfo.title,
-      desc: book.volumeInfo.description,
-      imgUrl: book.volumeInfo.imageLinks.thumbnail,
-      author: book.volumeInfo?.authors?.[0] || 'N/A'
-    }
-  })
+  console.log('book data!!!');
+  let bookInfo = [];
+  for (let i = 0; i < books.items.length; i++) {
+    let item = books.items[i];
+    let details =
+      {
+      id: item.volumeInfo.industryIdentifiers[0].identifier,
+      title: item.volumeInfo.title,
+      desc: item.volumeInfo.description,
+      imgUrl: item.volumeInfo.imageLinks.smallThumbnail,
+      author: item.volumeInfo?.authors?.[0] || 'N/A'
+  }
+  bookInfo.push(details);
+}
+console.log(bookInfo);
+return bookInfo;
 }
 
 const handleSubmit = (e) => {
   e.preventDefault();
 
-  $('#search-book-form button[type="submit"]').attr('disabled', true);
+  // $('#search-book-form button[type="submit"]').attr('disabled', true);
   const query = parseFormData(new FormData(e.currentTarget));
 
   axios({
@@ -75,24 +89,26 @@ const handleSubmit = (e) => {
       key: 'AIzaSyBfA2wBiAH5CQ-mTdgi143wMiH5zexb870'
     }
   }).then((resp) => {
-    generateResults(bookData(resp.data))
+    console.log(resp.data);
+    generateResults(bookData(resp.data));
+    console.log('after handle submit!!');
   }).catch((err) => {
-    generatePage({
-      errors: err.response.data
-    })
+      return(err);
   })
 }
 
 const generateTitle = () => {
-  return `<h1 class="text-center mb-3">Search The Library</h1>`
+  return `
+  <h1 class="text-center mb-3">Search The Library</h1>
+    `
 }
 
 const generateSearchBar = (info) => {
   return `
-    <div class="row">
+    <div class="row text-center">
       <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
         <form id="search-book-form">
-          <input type="text" name="q" id="search" placeholder="Search">
+          <input type="text" name="q" id="searchBar" placeholder="Enter Book Title">
           <button type="submit" id="submitSearch">Search</button>
         </form>
       </div>
@@ -117,6 +133,6 @@ $(document).ready(() => {
 
 <%- contentFor('body') %>
 <div id="pages-lightread-library" class="container mt-5 mb-5">
-  <div id="search-bar-container"></div>
+  <div id="search-bar-container" class="d-flex flex-column"></div>
   <div id="search-results-container"></div>
 </div>
