@@ -116,6 +116,7 @@ footer {
 	padding: 5px 9px;
 	border: 1px solid #FBE698;
 	margin: 25px 0;
+	color: black;
 }
 
 #submitSearch {
@@ -151,4 +152,24 @@ footer {
 
 .book-info {
 width: 800px;
+}
+
+.categoryBtn {
+	background: #FBE698;
+	border-radius: 20px;
+	border: none;
+	padding: 10px 20px;
+	font-size: 16px;
+	cursor: pointer;
+	color: black;
+}
+
+.read-more {
+	color: blue;
+	font-weight: bold;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	outline: inherit;
 }

@@ -83,7 +83,7 @@ const generateTitle = () => {
   `
 }
 
-const generatePage = (info, toReadList, BookReviews) => {
+const generatePage = ({ info, toReadList, BookReviews } = {}) => {
   const $profileBody = $('#profile');
   const $title = generateTitle();
   const $profile = generateProfile(info);
@@ -141,7 +141,7 @@ $(document).ready(() => {
 <div id="pages-my-profile-show" class="container mt-5 mb-5">
   <div id="profile" class=""></div>
   <div id="my-content" class="container d-flex mt-5">
-    <div id="my-book-review-container" class="bg-warning col-9">
+    <div id="my-book-review-container" class="col-9">
       <div class="">
         <h2 class="text-center">My Book Reviews</h2>
         <button>Add New</button>

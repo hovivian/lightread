@@ -3,8 +3,7 @@
 <script>
 const generateForm = ({ user, errors } = {}) => {
   return `
-    <div class="row" style="margin-right: 0px";
->
+    <div class="row" style="margin-right: 0px";>
       <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
         <form id="signup-form">
           <div class="mb-3">
@@ -17,6 +16,18 @@ const generateForm = ({ user, errors } = {}) => {
               type="email"
             ></input>
             <div class="invalid-feedback">${errors?.email || ''}</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input
+              id="username"
+              class="form-control ${errors?.username && 'is-invalid'}"
+              name="username"
+              value="${user?.username || ''}"
+              type="text"
+            ></input>
+            <div class="invalid-feedback">${errors?.username || ''}</div>
           </div>
 
           <div class="mb-3">
@@ -69,7 +80,7 @@ const handleSignup = (e) => {
     url: '/api/auth/signup',
     data
   }).then(() => {
-    window.location.href = `/my/profile`
+    window.location.href = `/lightread/my/profile`
   }).catch((err) => {
     generatePage({
       user: parseFormData(data),

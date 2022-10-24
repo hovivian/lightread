@@ -23,15 +23,17 @@ const handleAddToReadList = () => {
 }
 
 const results = (books) => {
-  console.log('results');
-  console.log(books);
   return books.map((book) => {
+    let shortenText = book.desc.substring(0, 300);
+    let remainingText = book.desc.substring(300,(book.desc.length))
+
     return  `
       <div class="search-result d-flex">
-        <div class="book-img d-flex flex-column">
+        <div class="book-img d-flex flex-column align-items-center">
         <img class="mb-3" src="${book.imgUrl}">
         <button
           class="addtolist-btn"
+          style="width: 190px;"
           type="button"
           data-book-id="${book.id}"
           data-book-title="${book.title}"
@@ -42,8 +44,7 @@ const results = (books) => {
         <div class="book-info">
           <h1>${book.title}</h1>
           <p>Author: ${book.author}</p>
-          <div class="mb-3">${book.desc}</div>
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Read More</button>
+          <div class="mb-3">${shortenText}... <button class="read-more">Read More</button></div>
         </div>
       </div>
     `
@@ -51,7 +52,6 @@ const results = (books) => {
 }
 
 const generateResults = (books) => {
-  console.log('generate results!!!');
   const $searchResultsContainer = $('#search-results-container');
   const $results = results(books);
 
@@ -89,10 +89,42 @@ const handleSubmit = (e) => {
       key: 'AIzaSyDrsPi3InGl9CO_EZTAEQfHtco_ch7-f-A'
     }
   }).then((resp) => {
-    console.log('handle submit!');
-    console.log(resp.data);
+    console.log(resp);
+    console.log(query);
     generateResults(bookData(resp.data));
-    console.log('after handle submit!!');
+  }).catch((err) => {
+      return(err);
+  })
+}
+
+const categoriesBtn = () => {
+return `
+<div class="d-flex justify-content-around mb-5">
+  <button id="fiction"type="button" class="categoryBtn btn btn-primary">Fiction</button>
+  <button id="history" type="button" class="categoryBtn btn btn-primary">History</button>
+  <button id="classics" type="button" class="categoryBtn btn btn-primary">Classics</button>
+  <button id="children" type="button" class="categoryBtn btn btn-primary">Children's</button>
+  <button id="education" type="button" class="categoryBtn btn btn-primary">Education</button>
+  <button id="psychology" type="button" class="categoryBtn btn btn-primary">Psychology</button>
+  <button id="horror" type="button" class="categoryBtn btn btn-primary">Horror</button>
+  </div>
+`
+}
+
+const handleCategories = (e)  => {
+  const query = e.currentTarget.id;
+
+  axios({
+    method: 'GET',
+    url: `https://www.googleapis.com/books/v1/volumes`,
+    params: {
+      q: `subject:${query}`,
+      key: 'AIzaSyDrsPi3InGl9CO_EZTAEQfHtco_ch7-f-A'
+    }
+  }).then((resp) => {
+    console.log(resp);
+    console.log(query);
+    generateResults(bookData(resp.data));
   }).catch((err) => {
       return(err);
   })
@@ -121,14 +153,16 @@ const generatePage = (info) => {
   const $page = $('#search-bar-container');
   const $title = generateTitle();
   const $searchBar = generateSearchBar(info);
+  const $categories = categoriesBtn();
 
-  $page.html('').append($title).append($searchBar);
+  $page.html('').append($title).append($searchBar).append($categories);
 }
 
 $(document).ready(() => {
   generatePage();
   $('#search-bar-container').on('submit', '#search-book-form', handleSubmit);
   $('#search-results-container').on('click', '.addToReadList', handleAddToReadList);
+  $('#search-bar-container').on('click', '.categoryBtn', handleCategories);
 })
 </script>
 
