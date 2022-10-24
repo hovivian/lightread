@@ -11,7 +11,7 @@ import { ironSession } from 'iron-session/express'
 import parseData from './src/_middlewares/parse-data.js'
 
 const app = express() // The instance that "host" our server
-const port = process.env.PORT || 3030 // The port number our server runs on
+const port = process.env.PORT || 3035 // The port number our server runs on
 
 // Allow views to have access to moment library
 app.locals.moment = moment

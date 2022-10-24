@@ -23,6 +23,8 @@ const handleAddToReadList = () => {
 }
 
 const results = (books) => {
+  console.log('results');
+  console.log(books);
   return books.map((book) => {
     return  `
       <div class="search-result d-flex">
@@ -44,7 +46,6 @@ const results = (books) => {
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Read More</button>
         </div>
       </div>
-
     `
   }).join('');
 }
@@ -53,11 +54,11 @@ const generateResults = (books) => {
   console.log('generate results!!!');
   const $searchResultsContainer = $('#search-results-container');
   const $results = results(books);
+
   $searchResultsContainer.html('').append($results);
 }
 
 const bookData = (books) => {
-  console.log('book data!!!');
   let bookInfo = [];
   for (let i = 0; i < books.items.length; i++) {
     let item = books.items[i];
@@ -68,10 +69,9 @@ const bookData = (books) => {
       desc: item.volumeInfo.description,
       imgUrl: item.volumeInfo.imageLinks.smallThumbnail,
       author: item.volumeInfo?.authors?.[0] || 'N/A'
-  }
+      }
   bookInfo.push(details);
 }
-console.log(bookInfo);
 return bookInfo;
 }
 
@@ -86,9 +86,10 @@ const handleSubmit = (e) => {
     url: `https://www.googleapis.com/books/v1/volumes`,
     params: {
       ...query,
-      key: 'AIzaSyBfA2wBiAH5CQ-mTdgi143wMiH5zexb870'
+      key: 'AIzaSyDrsPi3InGl9CO_EZTAEQfHtco_ch7-f-A'
     }
   }).then((resp) => {
+    console.log('handle submit!');
     console.log(resp.data);
     generateResults(bookData(resp.data));
     console.log('after handle submit!!');
