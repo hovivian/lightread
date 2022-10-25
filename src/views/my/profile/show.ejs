@@ -122,7 +122,7 @@ const getToReadList = () => {
 const getProfile = () => {
   axios({
     method: 'GET',
-    url: '/api/my/profile/show'
+    url: '/api/my/profile'
   }).then((resp) => {
     generatePage({ info: resp.data })
   })

@@ -1,134 +1,86 @@
 <%- contentFor('styles') %>
 <%- contentFor('scripts') %>
 <script>
+const featuredBooks = (books) => {
+  return books.map((book) => {
+  return `
+    <div class="featured-books-row d-flex justify-content-around mb-5">
+      <div class="card" style="width: 14rem;">
+        <img class="card-img-top" src="${book.imgUrl}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">${book.title}</h5>
+          <p class="card-text">${book.author}</p>
+          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
+        </div>
+      </div>
+    </div>
+  `
+}).join('');
+}
+
+const bookData = (books) => {
+  let bookInfo = [];
+  for (let i = 0; i < books.items.length; i++) {
+    let item = books.items[i];
+    let details =
+      {
+      id: item.volumeInfo.industryIdentifiers[0].identifier,
+      title: item.volumeInfo.title,
+      imgUrl: item.volumeInfo.imageLinks.thumbnail,
+      author: item.volumeInfo?.authors?.[0] || 'N/A'
+      }
+  bookInfo.push(details);
+}
+return bookInfo;
+}
+
+const getFeaturedBooks = () => {
+  axios({
+    method: 'GET',
+    url: `https://www.googleapis.com/books/v1/volumes`,
+    params: {
+      q: `subject:fantasy`,
+      key: 'AIzaSyDrsPi3InGl9CO_EZTAEQfHtco_ch7-f-A'
+    }
+  }).then((resp) => {
+    console.log(resp);
+    generateFeaturedBooks(bookData(resp.data));
+  }).catch((err) => {
+      return(err);
+  })
+}
+
+const generateFeaturedBooks = (books) => {
+  console.log(books);
+  const $featuredBooksContainer = $('#featured-books-container');
+  const $featuredBooks = featuredBooks(books);
+
+  $featuredBooksContainer.html('').append($featuredBooks);
+}
+
+$(document).ready(() => {
+  getFeaturedBooks();
+})
+
 </script>
 
 <%- contentFor('body') %>
 <div id="pages-lightread-index" class="container d-flex flex-column">
   <div id="header" class="d-lg-flex align-items-center justify-content-center mt-5">
-      <div class="index-left ms-3 d-flex flex-column align-items-start">
-        <h1 class="text-left mb-4">Share Your Favorite Books With The World!</h1>
-        <div id="index-subtitle" class="mb-4">
-        <h2 class="text-left">LightRead:</h2>
-        <h2 class="text-left">Your Online Bookshelf</h2>
-      </div>
-        <button id="homepage-btn"><a href="/lightread/library">Search The Library</a></button>
-      </div>
-      <div class="index-right">
-        <img id="index-banner" src="../../images/main-kv.png" alt="banner">
-      </div>
-  </div>
-  <div id="index-body" class="d-flex flex-column mt-5">
-    <div>
-    <h2 class="text-center mb-5">Featured Books</h2>
-  </div>
-
-
-  <div class="featured-books-container d-flex flex-column">
-    <div class="featured-books-row d-flex justify-content-around mb-5">
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9780/2415/9780241512425.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Bullet That Missed</h5>
-          <p class="card-text">Richard Osman</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9781/3985/9781398518162.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">It Starts With Us</h5>
-          <p class="card-text">Colleen Hoover</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/override/v1/large/9781/5290/9781529054194.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Christie Affair</h5>
-          <p class="card-text">Nina de Gramont</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9781/9087/9781908745903.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Seven Moons Of Maali Almeida</h5>
-          <p class="card-text">Shehan Karunatilaka</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
+    <div class="index-left ms-3 d-flex flex-column align-items-start">
+      <h1 class="text-left mb-4">Share Your Favorite Books With The World!</h1>
+      <div id="index-subtitle" class="mb-4">
+      <h2 class="text-left">LightRead:</h2>
+      <h2 class="text-left">Your Online Bookshelf</h2>
     </div>
-
-    <div class="featured-books-row d-flex justify-content-around mb-5">
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9780/2415/9780241512425.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Bullet That Missed</h5>
-          <p class="card-text">Richard Osman</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9781/3985/9781398518162.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">It Starts With Us</h5>
-          <p class="card-text">Colleen Hoover</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 16rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/override/v1/large/9781/5290/9781529054194.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Christie Affair</h5>
-          <p class="card-text">Nina de Gramont</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9781/9087/9781908745903.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Seven Moons Of Maali Almeida</h5>
-          <p class="card-text">Shehan Karunatilaka</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
+      <button id="homepage-btn"><a href="/lightread/library">Search The Library</a></button>
     </div>
-
-    <div class="featured-books-row d-flex justify-content-around mb-5">
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9780/2415/9780241512425.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Bullet That Missed</h5>
-          <p class="card-text">Richard Osman</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9781/3985/9781398518162.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">It Starts With Us</h5>
-          <p class="card-text">Colleen Hoover</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/override/v1/large/9781/5290/9781529054194.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Christie Affair</h5>
-          <p class="card-text">Nina de Gramont</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="https://cdn.waterstones.com/bookjackets/large/9781/9087/9781908745903.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">The Seven Moons Of Maali Almeida</h5>
-          <p class="card-text">Shehan Karunatilaka</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
-        </div>
-      </div>
+    <div class="index-right">
+      <img id="index-banner" src="../../images/main-kv.png" alt="banner">
     </div>
   </div>
-</div>
+  <div id="featured-books" class="d-flex flex-column mt-5">
+      <h2 class="text-center mb-5">Featured Books</h2>
+      <div id="featured-books-container" class="d-flex justify-content-around flex-wrap mb-5"></div>
+  </div>
 </div>

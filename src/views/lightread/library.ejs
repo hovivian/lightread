@@ -23,32 +23,36 @@ const handleAddToReadList = () => {
 }
 
 const results = (books) => {
-  return books.map((book) => {
-    let shortenText = book.desc.substring(0, 300);
-    let remainingText = book.desc.substring(300,(book.desc.length))
+  try {
+    return books.map((book) => {
+      let shortenText = book.desc.substring(0, 300);
+      let remainingText = book.desc.substring(300,(book.desc.length))
 
-    return  `
-      <div class="search-result d-flex">
-        <div class="book-img d-flex flex-column align-items-center">
-        <img class="mb-3" src="${book.imgUrl}">
-        <button
-          class="addtolist-btn"
-          style="width: 190px;"
-          type="button"
-          data-book-id="${book.id}"
-          data-book-title="${book.title}"
-          data-book-description="${book.description}"
-        >📖 Add To To-Read List</button>
-        </div>
+      return  `
+        <div class="search-result d-flex">
+          <div class="book-img d-flex flex-column align-items-center">
+          <img class="mb-3" src="${book.imgUrl}">
+          <button
+            class="addtolist-btn"
+            style="width: 190px;"
+            type="button"
+            data-book-id="${book.id}"
+            data-book-title="${book.title}"
+            data-book-description="${book.description}"
+          >📖 Add To To-Read List</button>
+          </div>
 
-        <div class="book-info">
-          <h1>${book.title}</h1>
-          <p>Author: ${book.author}</p>
-          <div class="mb-3">${shortenText}... <button class="read-more">Read More</button></div>
+          <div class="book-info">
+            <h1>${book.title}</h1>
+            <p>Author: ${book.author}</p>
+            <div class="mb-3">${shortenText}... <button class="read-more">Read More</button></div>
+          </div>
         </div>
-      </div>
-    `
-  }).join('');
+      `
+    }).join('');
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 const generateResults = (books) => {
@@ -62,17 +66,19 @@ const bookData = (books) => {
   let bookInfo = [];
   for (let i = 0; i < books.items.length; i++) {
     let item = books.items[i];
-    let details =
-      {
-      id: item.volumeInfo.industryIdentifiers[0].identifier,
-      title: item.volumeInfo.title,
-      desc: item.volumeInfo.description,
-      imgUrl: item.volumeInfo.imageLinks.smallThumbnail,
-      author: item.volumeInfo?.authors?.[0] || 'N/A'
+    if (item.volumeInfo.industryIdentifiers) {
+      let details = {
+        id: item.volumeInfo.industryIdentifiers[0].identifier,
+        title: item.volumeInfo.title || '',
+        desc: item.volumeInfo.description || '',
+        imgUrl: item.volumeInfo?.imageLinks?.thumbnail || '',
+        author: item.volumeInfo?.authors?.[0] || 'N/A'
       }
-  bookInfo.push(details);
-}
-return bookInfo;
+
+      bookInfo.push(details);
+    }
+  }
+  return bookInfo;
 }
 
 const handleSubmit = (e) => {
@@ -93,22 +99,23 @@ const handleSubmit = (e) => {
     console.log(query);
     generateResults(bookData(resp.data));
   }).catch((err) => {
-      return(err);
+    return(err);
   })
 }
 
 const categoriesBtn = () => {
-return `
-<div class="d-flex justify-content-around mb-5">
-  <button id="fiction"type="button" class="categoryBtn btn btn-primary">Fiction</button>
-  <button id="history" type="button" class="categoryBtn btn btn-primary">History</button>
-  <button id="classics" type="button" class="categoryBtn btn btn-primary">Classics</button>
-  <button id="children" type="button" class="categoryBtn btn btn-primary">Children's</button>
-  <button id="education" type="button" class="categoryBtn btn btn-primary">Education</button>
-  <button id="psychology" type="button" class="categoryBtn btn btn-primary">Psychology</button>
-  <button id="horror" type="button" class="categoryBtn btn btn-primary">Horror</button>
-  </div>
-`
+  return `
+    <div class="d-flex justify-content-around mb-5">
+      <button id="fantasy"type="button" class="categoryBtn btn btn-primary">Fantasy</button>
+      <button id="art"type="button" class="categoryBtn btn btn-primary">Art</button>
+      <button id="history" type="button" class="categoryBtn btn btn-primary">History</button>
+      <button id="nonfiction" type="button" class="categoryBtn btn btn-primary">Non Fiction</button>
+      <button id="children" type="button" class="categoryBtn btn btn-primary">Children's</button>
+      <button id="philosophy" type="button" class="categoryBtn btn btn-primary">Philosophy</button>
+      <button id="psychology" type="button" class="categoryBtn btn btn-primary">Psychology</button>
+      <button id="thriller" type="button" class="categoryBtn btn btn-primary">Thriller</button>
+    </div>
+  `
 }
 
 const handleCategories = (e)  => {
@@ -126,7 +133,7 @@ const handleCategories = (e)  => {
     console.log(query);
     generateResults(bookData(resp.data));
   }).catch((err) => {
-      return(err);
+    console.log(err)
   })
 }
 

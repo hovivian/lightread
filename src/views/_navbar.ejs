@@ -24,7 +24,7 @@
 
     axios({
       method: 'GET',
-      url: '/api/my/profile/show',
+      url: '/api/my/profile',
     }).then((resp) => {
       replaceDynamicLinks({ user: resp.data })
     }).catch(() => {
