@@ -49,6 +49,15 @@ color:#FBE698;
 	cursor: pointer;
 }
 
+.new-book-review-btn {
+	background: #fb9b98;
+	border-radius: 10px;
+	border: none;
+	padding: 10px 20px;
+	font-size: 12px;
+	cursor: pointer;
+}
+
 .index-right {
 	// animation-name: floating;
 	// animation-duration: 3s;
@@ -159,9 +168,16 @@ footer {
 	width: 350px;
 }
 
-.book-img img{
+.book-img img {
 	height: 200px;
 	width: 140px;
+}
+
+.featured-book-img {
+	height: 240px;
+	width: 180px;
+	margin: 16px;
+	margin-bottom: 0;
 }
 
 .book-info {
@@ -198,4 +214,8 @@ width: 800px;
 #pages-my-profile-show h2 {
 	color: #AF92FF;
 	font-size: 28px;
+}
+
+#newBookReviewModal {
+	color: black;
 }

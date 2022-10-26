@@ -4,19 +4,18 @@ import prisma from '../../../_helpers/prisma.js'
 import handleErrors from '../../../_helpers/handle-errors.js'
 
 const createSchema = yup.object({
-  book: yup.string().required(),
-  content: yup.string()
+  title: yup.string().required(),
 })
 
-const controllersApiBookReviewsCreate = async (req, res) => {
+const controllersApiToReadListCreate = async (req, res) => {
   try {
     const { body } = req
     const verifiedData = await createSchema.validate(body, { abortEarly: false, stripUnknown: true })
-    const newBookReview = await prisma.bookReview.create({ data: verifiedData })
-    return res.status(201).json(newBookReview)
+    const newToReadList = await prisma.toReadList.create({ data: verifiedData })
+    return res.status(201).json(newToReadList)
   } catch (err) {
     return handleErrors(res, err)
   }
 }
 
-export default controllersApiBookReviewsCreate
+export default controllersApiToReadListCreate

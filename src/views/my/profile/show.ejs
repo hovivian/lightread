@@ -2,35 +2,6 @@
 <%- contentFor('scripts') %>
 <script>
 
-const generateForm = () => {
-return `
-<div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-        <form id="book-review-new-form">
-          <div class="mb-3">
-            <label for="book-review-title" class="form-label">Title</label>
-            <input
-              id="book-review-title"
-              class="form-control ${errors?.title && 'is-invalid'}"
-              name="title"
-              value="${bookReview?.title || ''}"
-            ></input>
-            <div class="invalid-feedback">${errors?.title || ''}</div>
-          </div>
-          <div class="mb-3">
-            <label for="book-review-content" class="form-label">Content</label>
-            <textarea
-              id="book-review-content"
-              class="form-control ${errors?.content && 'is-invalid'}"
-              name="content"
-              rows="3"
-            >${bookReview?.content || ''}</textarea>
-            <div class="invalid-feedback">${errors?.content || ''}</div>
-          </div>
-        </form>
-      </div>
-`
-}
-
 // const generateMyToReadList = (books) => {
 //   return `
 //         <div class="bg-primary">
@@ -41,51 +12,6 @@ return `
 //             </ul>
 //           </div>
 //         </div>
-//   `
-// }
-
-// const handleSubmit = (e) => {
-//   e.preventDefault()
-//   const data = new FormData(e.currentTarget)
-//   $('#book-review-new-form button[type="submit"]').attr('disabled', true)
-//   axios({
-//     method: 'POST',
-//     url: '/api/my/bookreviews',
-//     data
-//   }).then((resp) => {
-//     window.location.href = `/lightread/my/profile`
-//   }).catch((err) => {
-//     console.log(err);  })
-// }
-
-// const generateMyBookReview = (bookReview) => {
-//   return `
-//       <div class="col">
-//           <div class="card-body text-center">
-//             <h5 class="card-title mb-2">${bookReview.title}</h5>
-//             <p>By${bookReview.username}</p>
-//             <p>By${bookReview.createdAt}</p>
-//             <p class="card-text mb-2">${bookReview.description}</p>
-//             <button>Read More</button>
-//           </div>
-//       </div>
-//   `
-// }
-
-// const generateMyBookReviews = (bookReviews) => {
-//   if (bookReviews.length === 0) {
-//     return `
-//       <h2 class="text-center mb-3">No Book Reviews Found!</h2>
-//     `
-//   }
-//   return `
-//     <div class="row">
-//       <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-//         <div id="book-reviews-list" class="row row-cols-1 g-3">
-//           ${bookReviews.map(generateMyBookReview).join('')}
-//         </div>
-//       </div>
-//     </div>
 //   `
 // }
 
@@ -109,7 +35,44 @@ const generateProfile = (username, email) => {
 `
 }
 
-const generatePage = (username, email) => {
+const bookReviews = (details) => {
+  return details.map((detail) => {
+      return  `
+        <div class="book-review d-flex">
+            <h1>${detail.title}</h1>
+            <p>By ${detail.username}</p>
+            <p>Posted on ${detail.createdAt}</p>
+            <p>${detail.content}</p>
+          </div>
+        </div>
+      `
+    }).join('');
+}
+
+const bookReviewData = (details) => {
+  let bookReviews = [];
+  for (let i = 0; i < details.length; i++) {
+    let item = details.items[i];
+      let info = {
+        username: items.username,
+        id: item.id,
+        title: item.title,
+        content: item.content,
+        createdAt: item.createdAt
+      }
+      bookReviews.push(info);
+  }
+  return bookReviews;
+}
+
+const generateMyBookReviews = (details) => {
+  const $myBookReviewsContainer = $('#my-book-review-container')
+  const $myBookReviews = bookReviews(details);
+
+  $myBookReviewsContainer.html('').append($myBookReviews);
+}
+
+const generatePage = (username, email, bookReviews) => {
   const $profileBody = $('#profile-container');
   const $title = generateTitle();
   const $profile = generateProfile(username, email);
@@ -120,26 +83,21 @@ const generatePage = (username, email) => {
   // const $myToReadList = generateMyToReadList();
 
   // $myToReadListContainer.html('').append($myToReadList);
-
-  // const $myBookReviewsContainer = $('#my-book-review-container')
-  // const $myBookReviews = generateMyBookReviews(BookReviews);
-
-  // $myBookReviewsContainer.html('').append($myBookReviews);
 }
 
-// const getBookReviews = () => {
-//   axios({
-//     method: 'GET',
-//     url: '/api/my/bookreviews/show'
-//   }).then((resp) => {
-//     generatePage({ bookreviews: resp.data })
-//   })
-// }
+const getBookReviews = () => {
+  axios({
+    method: 'GET',
+    url: '/api/my/bookreviews'
+  }).then((resp) => {
+    generateMyBookReviews(resp.data);
+  })
+}
 
 const getToReadList = () => {
   axios({
     method: 'GET',
-    url: '/api/my/toreadlist/show'
+    url: '/api/my/toreadlist/index'
   }).then((resp) => {
     console.log('get to read list');
     console.log(resp.data);
@@ -161,8 +119,7 @@ $(document).ready(() => {
   generatePage();
   getProfile();
   // getToReadList();
-  // getBookReviews();
-  // $('#my-content').on('submit', '#book-review-new-form', handleSubmit)
+  getBookReviews();
 })
 </script>
 
@@ -177,9 +134,6 @@ $(document).ready(() => {
   <div id="profile-right-container" class="col-8 p-3">
     <div class="book-review-header">
       <h2 class="text-center">My Book Reviews</h2>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Add New
-      </button>
     </div>
     <div id="my-book-review-container" class=""></div>
   </div>

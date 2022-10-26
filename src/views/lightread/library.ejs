@@ -1,8 +1,7 @@
 <%- contentFor('styles') %>
 <%- contentFor('scripts') %>
 <script>
-
-const handleAddToReadList = () => {
+const handleAddToReadList = (e) => {
   $('.search-result button[type="submit"]').attr('disabled', true);
 
   axios({
@@ -170,7 +169,7 @@ const generatePage = (info) => {
 $(document).ready(() => {
   generatePage();
   $('#search-bar-container').on('submit', '#search-book-form', handleSubmit);
-  $('#search-results-container').on('click', '.addToReadList', handleAddToReadList);
+  $('#search-results-container').on('click', '.addtolist-btn', handleAddToReadList);
   $('#search-bar-container').on('click', '.categoryBtn', handleCategories);
 })
 </script>

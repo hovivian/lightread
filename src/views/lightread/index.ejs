@@ -1,18 +1,72 @@
 <%- contentFor('styles') %>
 <%- contentFor('scripts') %>
 <script>
+
+const handleAddToReadList = (e) => {
+  $('.featured-books-row button[type="submit"]').attr('disabled', true);
+
+  axios({
+    method: 'POST',
+    url: `/api/my/toreadlist`,
+    data: {
+      id: $(e.currentTarget).data('id'),
+      book: $(e.currentTarget).data('book')
+    },
+  }).then((resp) => {
+    $('.featured-books-row button[type="submit"]').text('Added').addClass('added');
+  }).catch((err) => {
+    if (err.response.status === 401) window.location.href = '/login'
+  }).finally(() => {
+    $('.featured-books-row button[type="submit"]').attr('disabled', false);
+  })
+}
+
+const handleNewBookReview = (e) => {
+  e.preventDefault()
+  const data = new FormData($('#book-review-new-form')[0])
+  $('#modal-footer button[type="submit"]').attr('disabled', true)
+  axios({
+    method: 'POST',
+    url: '/api/my/bookreviews',
+    data
+  }).then((resp) => {
+    window.location.href = `/my/profile`
+  }).catch((err) => {
+    if (err.response.status === 401) window.location.href = '/login'
+  })
+}
+
 const featuredBooks = (books) => {
   return books.map((book) => {
   return `
-    <div class="featured-books-row d-flex justify-content-around mb-5">
-      <div class="card" style="width: 14rem;">
-        <img class="card-img-top" src="${book.imgUrl}" alt="Card image cap">
+    <div class="featured-books-row flex-column d-flex justify-content-around mb-5">
+      <div class="card" style="width: 14rem; height:25rem">
+        <img class="featured-book-img align-items-center" src="${book.imgUrl}" alt="Card image cap">
         <div class="card-body">
-          <h5 class="card-title">${book.title}</h5>
-          <p class="card-text">${book.author}</p>
-          <a href="#" class="btn addtolist-btn">📖 Add To To-Read List</a>
+          <h5 class="card-title text-center">${book.title}</h5>
+          <p class="card-text text-center">${book.author}</p>
         </div>
       </div>
+      <div class="d-flex flex-column">
+        <button
+            class="addtolist-btn mb-3"
+            style="width: 190px;"
+            type="button"
+            data-book-id="${book.isbn}"
+            data-book-title="${book.title}"
+            data-book-description="${book.description}"
+          >📖 Add To To-Read List</button>
+
+          <button
+            class="new-book-review-btn btn-primary"
+            style="width: 190px;"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#newBookReviewModal"
+            value="${book.title}"
+            >✍️ Write Book Review
+          </button>
+          </div>
     </div>
   `
 }).join('');
@@ -22,16 +76,21 @@ const bookData = (books) => {
   let bookInfo = [];
   for (let i = 0; i < books.items.length; i++) {
     let item = books.items[i];
-    let details =
-      {
-      id: item.volumeInfo.industryIdentifiers[0].identifier,
-      title: item.volumeInfo.title,
-      imgUrl: item.volumeInfo.imageLinks.thumbnail,
-      author: item.volumeInfo?.authors?.[0] || 'N/A'
+    if (item.volumeInfo.industryIdentifiers) {
+      let details = {
+        isbn: item.volumeInfo.industryIdentifiers[0].identifier,
+        id: item.id,
+        title: item.volumeInfo.title || 'N/A',
+        desc: item.volumeInfo.description || 'No Description',
+        imgUrl: item.volumeInfo?.imageLinks?.thumbnail || '../../images/book-cover.png',
+        author: item.volumeInfo?.authors?.[0] || 'N/A'
+
       }
-  bookInfo.push(details);
-}
-return bookInfo;
+
+      bookInfo.push(details);
+    }
+  }
+  return bookInfo;
 }
 
 const getFeaturedBooks = () => {
@@ -43,7 +102,6 @@ const getFeaturedBooks = () => {
       key: 'AIzaSyDrsPi3InGl9CO_EZTAEQfHtco_ch7-f-A'
     }
   }).then((resp) => {
-    console.log(resp);
     generateFeaturedBooks(bookData(resp.data));
   }).catch((err) => {
       return(err);
@@ -51,7 +109,6 @@ const getFeaturedBooks = () => {
 }
 
 const generateFeaturedBooks = (books) => {
-  console.log(books);
   const $featuredBooksContainer = $('#featured-books-container');
   const $featuredBooks = featuredBooks(books);
 
@@ -60,6 +117,8 @@ const generateFeaturedBooks = (books) => {
 
 $(document).ready(() => {
   getFeaturedBooks();
+  $('#featured-books-container').on('click', '.addtolist-btn', handleAddToReadList);
+  $('#newBookReviewModal').on('click', '#post-button', handleNewBookReview)
 })
 
 </script>
@@ -82,5 +141,45 @@ $(document).ready(() => {
   <div id="featured-books" class="d-flex flex-column mt-5">
       <h2 class="text-center mb-5">Featured Books</h2>
       <div id="featured-books-container" class="d-flex justify-content-around flex-wrap mb-5"></div>
+  </div>
+</div>
+
+<div class="modal fade" id="newBookReviewModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create New Book Review</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+          <form id="book-review-new-form">
+            <div class="mb-3">
+              <label for="book-review-title" class="form-label">Book Title</label>
+              <input
+                id="book-review-title"
+                class="form-control ${errors?.book && 'is-invalid'}"
+                name="book"
+                value="${book.title}"
+              ></input>
+              <div class="invalid-feedback">${errors?.book || ''}</div>
+            </div>
+            <div class="mb-3">
+              <label for="book-review-content" class="form-label">Content</label>
+              <textarea
+                id="book-review-content"
+                class="form-control ${errors?.content && 'is-invalid'}"
+                name="content"
+                rows="3"
+              ></textarea>
+              <div class="invalid-feedback">${errors?.content || ''}</div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="post-button" class="btn btn-primary">Post</button>
+      </div>
+    </div>
   </div>
 </div>
