@@ -7,7 +7,7 @@ const handleAddToReadList = () => {
 
   axios({
     method: 'POST',
-    url: `/api/my/to-read-list`,
+    url: `/api/my/toreadlist`,
     data: {
       bookId: $(e.currentTarget).data('book-id'),
       title: $(e.currentTarget).data('title'),
@@ -36,7 +36,7 @@ const results = (books) => {
             class="addtolist-btn"
             style="width: 190px;"
             type="button"
-            data-book-id="${book.id}"
+            data-book-id="${book.isbn}"
             data-book-title="${book.title}"
             data-book-description="${book.description}"
           >📖 Add To To-Read List</button>
@@ -45,7 +45,7 @@ const results = (books) => {
           <div class="book-info">
             <h1>${book.title}</h1>
             <p>Author: ${book.author}</p>
-            <div class="mb-3">${shortenText}... <button class="read-more">Read More</button></div>
+            <div class="mb-3">${shortenText}...<a href="https://books.google.com.hk/books?id=${book.id}" target="_blank">Read More</a></div>
           </div>
         </div>
       `
@@ -68,11 +68,13 @@ const bookData = (books) => {
     let item = books.items[i];
     if (item.volumeInfo.industryIdentifiers) {
       let details = {
-        id: item.volumeInfo.industryIdentifiers[0].identifier,
-        title: item.volumeInfo.title || '',
-        desc: item.volumeInfo.description || '',
-        imgUrl: item.volumeInfo?.imageLinks?.thumbnail || '',
+        isbn: item.volumeInfo.industryIdentifiers[0].identifier,
+        id: item.id,
+        title: item.volumeInfo.title || 'N/A',
+        desc: item.volumeInfo.description || 'No Description',
+        imgUrl: item.volumeInfo?.imageLinks?.thumbnail || '../../images/book-cover.png',
         author: item.volumeInfo?.authors?.[0] || 'N/A'
+
       }
 
       bookInfo.push(details);

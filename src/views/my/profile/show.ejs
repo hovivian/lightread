@@ -2,120 +2,148 @@
 <%- contentFor('scripts') %>
 <script>
 
-const generateMyToReadList = (toReadList) => {
-  return `
-        <div class="bg-primary col-3">
-          <h2 class="text-center">To-read List</h2>
-          <div id="toreadlist-section" class="">
-            <ul id="toreadlist">
-              <li>Harry Potter</li>
-              <li>Lord of the flies</li>
-              <li>1Q84</li>
-            </ul>
-          </div>
-        </div>
-  `
-}
-
-const handleSubmit = (e) => {
-  e.preventDefault()
-  const data = new FormData(e.currentTarget)
-  $('#wishlist-new-form button[type="submit"]').attr('disabled', true)
-  axios({
-    method: 'POST',
-    url: '/api/wishlists',
-    data
-  }).then((resp) => {
-    window.location.href = `/wishlists/${resp.data.id}`
-  }).catch((err) => {
-    generatePage({ wishlist: parseFormData(data), errors: err.response.data })
-  })
-}
-
-const generateMyBookReview = (bookReview) => {
-  return `
-      <div class="col">
-          <div class="card-body text-center">
-            <h5 class="card-title mb-2">${bookReview.title}</h5>
-            <p>By${bookReview.username}</p>
-            <p>By${bookReview.createdAt}</p>
-            <p class="card-text mb-2">${bookReview.description}</p>
-            <button>Read More</button>
-          </div>
-      </div>
-  `
-}
-
-const generateMyBookReviews = (bookReviews) => {
-  if (bookReviews.length === 0) {
-    return `
-      <h2 class="text-center mb-3">No Book Reviews Found!</h2>
-    `
-  }
-  return `
-    <div class="row">
-      <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-        <div id="book-reviews-list" class="row row-cols-1 g-3">
-          ${bookReviews.map(generateMyBookReview).join('')}
-        </div>
-      </div>
-    </div>
-  `
-}
-
-const generateProfile = (info) => {
+const generateForm = () => {
 return `
-      <div class="bg-info d-flex container">
-        <div>
-          <img class="col-6" id="profile-pic" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile-pic">
+<div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+        <form id="book-review-new-form">
+          <div class="mb-3">
+            <label for="book-review-title" class="form-label">Title</label>
+            <input
+              id="book-review-title"
+              class="form-control ${errors?.title && 'is-invalid'}"
+              name="title"
+              value="${bookReview?.title || ''}"
+            ></input>
+            <div class="invalid-feedback">${errors?.title || ''}</div>
+          </div>
+          <div class="mb-3">
+            <label for="book-review-content" class="form-label">Content</label>
+            <textarea
+              id="book-review-content"
+              class="form-control ${errors?.content && 'is-invalid'}"
+              name="content"
+              rows="3"
+            >${bookReview?.content || ''}</textarea>
+            <div class="invalid-feedback">${errors?.content || ''}</div>
+          </div>
+        </form>
+      </div>
+`
+}
+
+// const generateMyToReadList = (books) => {
+//   return `
+//         <div class="bg-primary">
+//           <h2 class="text-center">To-read List</h2>
+//           <div id="toreadlist-section" class="">
+//             <ul id="toreadlist">
+//               <li>${book.title}li>
+//             </ul>
+//           </div>
+//         </div>
+//   `
+// }
+
+// const handleSubmit = (e) => {
+//   e.preventDefault()
+//   const data = new FormData(e.currentTarget)
+//   $('#book-review-new-form button[type="submit"]').attr('disabled', true)
+//   axios({
+//     method: 'POST',
+//     url: '/api/my/bookreviews',
+//     data
+//   }).then((resp) => {
+//     window.location.href = `/lightread/my/profile`
+//   }).catch((err) => {
+//     console.log(err);  })
+// }
+
+// const generateMyBookReview = (bookReview) => {
+//   return `
+//       <div class="col">
+//           <div class="card-body text-center">
+//             <h5 class="card-title mb-2">${bookReview.title}</h5>
+//             <p>By${bookReview.username}</p>
+//             <p>By${bookReview.createdAt}</p>
+//             <p class="card-text mb-2">${bookReview.description}</p>
+//             <button>Read More</button>
+//           </div>
+//       </div>
+//   `
+// }
+
+// const generateMyBookReviews = (bookReviews) => {
+//   if (bookReviews.length === 0) {
+//     return `
+//       <h2 class="text-center mb-3">No Book Reviews Found!</h2>
+//     `
+//   }
+//   return `
+//     <div class="row">
+//       <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+//         <div id="book-reviews-list" class="row row-cols-1 g-3">
+//           ${bookReviews.map(generateMyBookReview).join('')}
+//         </div>
+//       </div>
+//     </div>
+//   `
+// }
+
+const generateTitle = () => {
+  return `
+  <h2 class="text-center">My profile</h2>
+  `
+}
+
+const generateProfile = (username, email) => {
+    return `
+      <div class="d-flex flex-column container align-items-center">
+        <div class="profile-pic mt-3">
+          <img id="profile-pic" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile-pic">
         </div>
-        <div class="col-6">
-          <p>Username:${info.username}</p>
-          <p>Email:${info.email}</p>
+        <div class="profile-details">
+          <p id="username" class="text-center mb-0 mt-3">${username}</p>
+          <p id="email" class="text-center">${email}</p>
         </div>
       </div>
 `
 }
 
-const generateTitle = () => {
-  return `
-  <h1 class="text-center">My profile</h1>
-  `
-}
-
-const generatePage = ({ info, toReadList, BookReviews } = {}) => {
-  const $profileBody = $('#profile');
+const generatePage = (username, email) => {
+  const $profileBody = $('#profile-container');
   const $title = generateTitle();
-  const $profile = generateProfile(info);
+  const $profile = generateProfile(username, email);
 
   $profileBody.html('').append($title).append($profile);
 
-  const $myBookReviewsContainer = $('#my-book-review-container')
-  const $myBookReviews = generateMyBookReviews(BookReviews);
+  // const $myToReadListContainer = $('#my-to-read-list-container')
+  // const $myToReadList = generateMyToReadList();
 
-  $myBookReviewsContainer.html('').append($myBookReviews);
+  // $myToReadListContainer.html('').append($myToReadList);
 
-  const $myToReadListContainer = $('#my-to-read-list-container')
-  const $myToReadList = generateMyToReadList(toReadList);
+  // const $myBookReviewsContainer = $('#my-book-review-container')
+  // const $myBookReviews = generateMyBookReviews(BookReviews);
 
-  $myToReadListContainer.html('').append($myToReadList);
+  // $myBookReviewsContainer.html('').append($myBookReviews);
 }
 
-const getBookReviews = () => {
-  axios({
-    method: 'GET',
-    url: '/api/my/bookreviews/show'
-  }).then((resp) => {
-    generatePage({ bookreviews: resp.data })
-  })
-}
+// const getBookReviews = () => {
+//   axios({
+//     method: 'GET',
+//     url: '/api/my/bookreviews/show'
+//   }).then((resp) => {
+//     generatePage({ bookreviews: resp.data })
+//   })
+// }
 
 const getToReadList = () => {
   axios({
     method: 'GET',
     url: '/api/my/toreadlist/show'
   }).then((resp) => {
-    generatePage({ toreadlist: resp.data })
+    console.log('get to read list');
+    console.log(resp.data);
+    // generatePage(resp)
   })
 }
 
@@ -124,30 +152,35 @@ const getProfile = () => {
     method: 'GET',
     url: '/api/my/profile'
   }).then((resp) => {
-    generatePage({ info: resp.data })
+    let {username, email} = resp.data;
+    generatePage(username, email);
   })
 }
 
 $(document).ready(() => {
   generatePage();
   getProfile();
-  getBookReviews();
-  getToReadList();
-  $('#my-content').on('submit', '#book-review-new-form', handleSubmit)
+  // getToReadList();
+  // getBookReviews();
+  // $('#my-content').on('submit', '#book-review-new-form', handleSubmit)
 })
 </script>
 
 <%- contentFor('body') %>
-<div id="pages-my-profile-show" class="container mt-5 mb-5">
-  <div id="profile" class=""></div>
-  <div id="my-content" class="container d-flex mt-5">
-    <div id="my-book-review-container" class="col-9">
-      <div class="">
-        <h2 class="text-center">My Book Reviews</h2>
-        <button>Add New</button>
-      </div>
-      <div id="my-bookreviews"></div>
+<div id="pages-my-profile-show" class="container mt-5 mb-5 d-flex justify-content-around">
+  <div id="profile-left-container" class="col-3">
+    <div id="profile-container" class=""></div>
+    <div id="my-to-read-list-container">
+      <h2 class="text-center">My Reading List</h2>
     </div>
-    <div id="my-to-read-list-container"></div>
+  </div>
+  <div id="profile-right-container" class="col-8 p-3">
+    <div class="book-review-header">
+      <h2 class="text-center">My Book Reviews</h2>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Add New
+      </button>
+    </div>
+    <div id="my-book-review-container" class=""></div>
   </div>
 </div>

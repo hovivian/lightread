@@ -20,10 +20,9 @@ router.get('/api/lightread/library', (await import('./controllers/api/lightread/
 router.get('/api/my/profile', (await import('./controllers/api/my/profile/show.js')).default)
 
 // API |  TO-READ LIST | MY PROFILE | AUTH REQUIRED
-router.get('/api/my/toreadlist',(await import('./controllers/api/my/profile/show.js')).default)
+router.get('/api/my/toreadlist/show',(await import('./controllers/api/my/profile/show.js')).default)
 
 // API |  BOOK REVIEW | MY PROFILE | AUTH REQUIRED
-
 
 // API | NOT FOUND
 router.use('/api', (await import('./controllers/api/not-found.js')).default)

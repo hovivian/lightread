@@ -77,7 +77,8 @@ color:#FBE698;
 }
 
 #pages-auth-signup {
-	background-color: white;
+	background-color:white;
+	color:  #895eff;
 	float: right;
 	width: 50%;
 	height: calc(100vh - 60px);
@@ -87,12 +88,24 @@ color:#FBE698;
 	float: left;
 	width: 50%;
 	height: calc(100vh - 60px);
+	background-color:#895eff;
+}
+
+#signup-btn, #login-btn {
+	background: #FBE698;
+	border-radius: 10px;
+	border: none;
+	padding: 10px 20px;
+	font-size: 16px;
 }
 
 #signup-features li {
 	list-style: none;
 }
 
+#login-form-wrapper {
+	height: calc(100vh - 250px);
+}
 
 footer {
 	// position: absolute;
@@ -107,6 +120,7 @@ footer {
 #profile-pic {
 	height: 150px;
 	width: 150px;
+	border-radius: 10px;
 }
 
 #searchBar {
@@ -164,12 +178,24 @@ width: 800px;
 	color: black;
 }
 
-.read-more {
-	color: blue;
-	font-weight: bold;
-	background: none;
-	border: none;
-	padding: 0;
-	cursor: pointer;
-	outline: inherit;
+#username {
+	font-weight: bolder;
+}
+
+#email {
+	font-weight: 300;
+}
+
+#my-to-read-list-container, #profile-container, #profile-right-container {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  background: white;
+  border-radius: 5px;
+  padding: 3%;
+  margin-bottom: 1.5rem;
+	color: black
+}
+
+#pages-my-profile-show h2 {
+	color: #AF92FF;
+	font-size: 28px;
 }

@@ -4,7 +4,7 @@
 const generateForm = ({ user, errors } = {}) => {
   return `
     <div class="row">
-      <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+      <div id="login-form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
         <form id="login-form">
           <div class="mb-3">
             <label for="user-email" class="form-label">Email</label>
@@ -30,7 +30,7 @@ const generateForm = ({ user, errors } = {}) => {
             <div class="invalid-feedback">${errors?.password || ''}</div>
           </div>
 
-          <button class="btn btn-primary" type="submit">Submit</button>
+          <button id="login-btn" class="btn" type="submit">Submit</button>
         </form>
       </div>
     </div>
@@ -72,4 +72,4 @@ $(document).ready(() => {
 </script>
 
 <%- contentFor('body') %>
-<div id="pages-auth-login" class="container"></div>
+<div id="pages-auth-login" class="container mt-5 mb-5 d-flex flex-column justify-content-center"></div>
