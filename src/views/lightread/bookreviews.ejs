@@ -1,10 +1,85 @@
 <%- contentFor('styles') %>
 <%- contentFor('scripts') %>
 <script>
-</script>
+const generateTitle = () => {
+  return `
+  <h1 class="text-center">Book Reviews</h1>
+  `
+}
 
+const bookReviews = (details) => {
+  return details.map((detail) => {
+    let shortenText = detail.content.substring(0, 250);
+      return  `
+        <div class="book-review d-flex">
+          <div class="book-review-info d-flex flex-column col-8">
+          <div>
+            <h1>${detail.title}</h1>
+          </div>
+          <div>
+            <p>By ${detail.username}</p>
+            <p>Posted on ${detail.createdAt}</p>
+            <p class="book-review-content">${shortenText}</p>
+          </div>
+          </div>
+          <div class="book-review-img col-4 d-flex justify-content-center">
+            <img class="featured-book-img align-items-center" src="${detail.imgUrl}" alt="book cover">
+          </div>
+        </div>
+      `
+    }).join('');
+}
+
+const bookReviewData = (details) => {
+  console.log('book review data');
+  console.log(details);
+
+  let bookReviews = [];
+  for (let i = 0; i < details.length; i++) {
+    let book = details[i];
+      let info = {
+        username: book.user.username,
+        imgUrl: book.book.image,
+        id: book.book.id,
+        title: book.book.title,
+        content: book.content,
+        createdAt: `${moment(book.createdAt).format("LL")}`,
+        author: book.book.author
+      }
+      bookReviews.push(info);
+  }
+  return bookReviews;
+}
+
+const generateBookReviews = (details) => {
+  const $bookReviewsContainer = $('#book-review-container');
+  const $bookReviews = bookReviews(details);
+
+  $bookReviewsContainer.html('').append($bookReviews);
+  console.log('generate book review!!');
+}
+
+const getBookReviews = () => {
+  axios({
+    method: 'GET',
+    url: '/api/bookreviews'
+  }).then((resp) => {
+    generateBookReviews(bookReviewData(resp.data));
+  })
+}
+
+const generatePage = () => {
+  const $page = $('#pages-lightread-bookreviews');
+  const $title = generateTitle();
+
+  $page.html('').append($title);
+}
+
+$(document).ready(() => {
+  generatePage();
+  getBookReviews();
+})
+</script>
 <%- contentFor('body') %>
-<div id="pages-lightread-bookreviews" class="container">
-  <div id="pages-lightread-library" class="mt-5 mb-5"> <h1 class="text-center">Book Reviews</h1>
-</div>
-</div>
+<div id="pages-lightread-bookreviews" class="container mt-5"></div>
+<div id="book-review-container" class="d-flex flex-wrap justify-content-around m-5"></div>

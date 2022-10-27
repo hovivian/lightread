@@ -1,52 +1,18 @@
 import prisma from '../../_helpers/prisma.js'
 import handleErrors from '../../_helpers/handle-errors.js'
 
-const controllersPagesLightReadBookReviews = async () => {
+const controllersApiMyBookReviews = async (req, res) => {
   try {
-    // Filters
-    const q = req.query.q || ''
-    const orderBy = req.query.orderBy || 'id'
-    const sortBy = req.query.sortBy || 'asc'
-
-    // Pagination
-    const take = 10
-    const page = Number(req.query.page || '1')
-    const skip = (page - 1) * take
-
-    const where = {
-      OR: [
-        {
-          title: {
-            contains: q
-          }
-        }, {
-          description: {
-            contains: q
-          }
-        }
-      ]
-    }
-
-    const totalBookReviews = await prisma.bookReview.count({ where })
     const foundBookReviews = await prisma.bookReview.findMany({
-      take,
-      skip,
-      where,
-      orderBy: {
-        [orderBy]: sortBy
-      },
       include: {
-        book: true
+        book: true,
+        user: true
       }
     })
-
-    return res.status(200).json({
-      bookReviews: foundBookReviews,
-      meta: { currentPage: page, totalPages: Math.ceil(totalBookReviews / take) }
-    })
-    } catch (err) {
+    return res.status(200).json(foundBookReviews)
+  } catch (err) {
     return handleErrors(res, err)
   }
 }
 
-export default controllersPagesLightReadBookReviews
+export default controllersApiMyBookReviews

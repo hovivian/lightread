@@ -11,9 +11,6 @@ router.delete('/api/auth/logout', (await import('./controllers/api/auth/logout.j
 // API | BOOK REVIEWS
 router.get('/api/bookreviews', (await import('./controllers/api/lightread/bookreviews.js')).default)
 
-// API | HOMEPAGE
-// router.get('/api/lightread', authenticateUser('json'), (await import('./controllers/api/lightread/index.js')).default)
-
 // API | LIBRARY
 router.get('/api/lightread/library', (await import('./controllers/api/lightread/library.js')).default)
 
@@ -21,7 +18,7 @@ router.get('/api/lightread/library', (await import('./controllers/api/lightread/
 router.get('/api/my/profile', authenticateUser('json'), (await import('./controllers/api/my/profile/show.js')).default)
 
 // API |  TO-READ LIST | MY PROFILE | AUTH REQUIRED
-router.get('/api/my/profile', authenticateUser('json'), (await import('./controllers/api/my/toreadlist/index.js')).default)
+router.get('/api/my/toreadlist', authenticateUser('json'), (await import('./controllers/api/my/toreadlist/index.js')).default)
 router.post('/api/my/toreadlist', authenticateUser('json'), (await import('./controllers/api/my/toreadlist/create.js')).default)
 
 // API |  BOOK REVIEW | MY PROFILE | AUTH REQUIRED

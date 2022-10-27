@@ -7,7 +7,8 @@ const controllersApiMyBookReviews = async (req, res) => {
     const foundBookReviews = await prisma.bookReview.findMany({
       where: {userId: id},
       include: {
-        book: true
+        book: true,
+        user: true
       }
     })
     return res.status(200).json(foundBookReviews)

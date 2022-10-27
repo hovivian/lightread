@@ -5,17 +5,21 @@
 const handleAddToReadList = (e) => {
   $('.featured-books-row button[type="submit"]').attr('disabled', true);
 
+  const $elem = $(e.currentTarget)
+  const identifierId = $elem.data('book-id')
+  const title = $elem.data('book-title')
+  const image = $elem.data('book-image')
+  const author = $elem.data('book-author')
+  const description = $elem.data('book-description')
+
   axios({
     method: 'POST',
     url: `/api/my/toreadlist`,
     data: {
-      id: $(e.currentTarget).data('id'),
-      book: $(e.currentTarget).data('book')
+      identifierId, title, image, author, description
     },
   }).then((resp) => {
     $('.featured-books-row button[type="submit"]').text('Added').addClass('added');
-  }).catch((err) => {
-    if (err.response.status === 401) window.location.href = '/login'
   }).finally(() => {
     $('.featured-books-row button[type="submit"]').attr('disabled', false);
   })

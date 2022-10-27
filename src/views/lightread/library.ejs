@@ -21,26 +21,10 @@ const handleAddToReadList = (e) => {
   })
 }
 
-const handleNewBookReview = (e) => {
-  e.preventDefault()
-  const data = new FormData($('#book-review-new-form')[0])
-  $('#modal-footer button[type="submit"]').attr('disabled', true)
-  axios({
-    method: 'POST',
-    url: '/api/my/bookreviews',
-    data
-  }).then((resp) => {
-    window.location.href = `/my/profile`
-  }).catch((err) => {
-    if (err.response.status === 401) window.location.href = '/login'
-  })
-}
-
 const results = (books) => {
   try {
     return books.map((book) => {
       let shortenText = book.desc.substring(0, 300);
-      let remainingText = book.desc.substring(300,(book.desc.length))
 
       return  `
         <div class="search-result d-flex">
@@ -114,7 +98,6 @@ const bookData = (books) => {
 const handleSubmit = (e) => {
   e.preventDefault();
 
-  // $('#search-book-form button[type="submit"]').attr('disabled', true);
   const query = parseFormData(new FormData(e.currentTarget));
 
   axios({
@@ -136,14 +119,14 @@ const handleSubmit = (e) => {
 const categoriesBtn = () => {
   return `
     <div class="d-flex justify-content-around mb-5">
-      <button id="fantasy"type="button" class="categoryBtn btn btn-primary">Fantasy</button>
-      <button id="art"type="button" class="categoryBtn btn btn-primary">Art</button>
-      <button id="history" type="button" class="categoryBtn btn btn-primary">History</button>
-      <button id="nonfiction" type="button" class="categoryBtn btn btn-primary">Non Fiction</button>
-      <button id="children" type="button" class="categoryBtn btn btn-primary">Children's</button>
-      <button id="philosophy" type="button" class="categoryBtn btn btn-primary">Philosophy</button>
-      <button id="psychology" type="button" class="categoryBtn btn btn-primary">Psychology</button>
-      <button id="thriller" type="button" class="categoryBtn btn btn-primary">Thriller</button>
+      <button id="fantasy" type="button" class="categoryBtn">Fantasy</button>
+      <button id="art" type="button" class="categoryBtn">Art</button>
+      <button id="history" type="button" class="categoryBtn">History</button>
+      <button id="nonfiction" type="button" class="categoryBtn">Non Fiction</button>
+      <button id="children" type="button" class="categoryBtn">Children's</button>
+      <button id="philosophy" type="button" class="categoryBtn">Philosophy</button>
+      <button id="psychology" type="button" class="categoryBtn">Psychology</button>
+      <button id="thriller" type="button" class="categoryBtn">Thriller</button>
     </div>
   `
 }
@@ -159,8 +142,6 @@ const handleCategories = (e)  => {
       key: 'AIzaSyDrsPi3InGl9CO_EZTAEQfHtco_ch7-f-A'
     }
   }).then((resp) => {
-    console.log(resp);
-    console.log(query);
     generateResults(bookData(resp.data));
   }).catch((err) => {
     console.log(err)
@@ -170,15 +151,15 @@ const handleCategories = (e)  => {
 const bookReviewForm = ({ identifierId, title, image, author }) => {
   return `
   <form id="book-review-new-form">
-    <input name="identifierId" value="${identifierId}" class="d-none">
-    <input name="image" value="${image}" class="d-none">
-    <input name="author" value="${author}" class="d-none">
+    <input name="book[identifierId]" value="${identifierId}" class="d-none">
+    <input name="book[image]" value="${image}" class="d-none">
+    <input name="book[title]" value="${title}" class="d-none">
+    <input name="book[author]" value="${author}" class="d-none">
     <div class="mb-3">
       <label for="book-review-title" class="form-label">Book Title</label>
       <input
         id="book-review-title"
         class="form-control"
-        name="book"
         value="${title}"
         disabled
       ></input>
@@ -199,10 +180,25 @@ const bookReviewForm = ({ identifierId, title, image, author }) => {
 }
 
 const generateBookReviewForm = ({ identifierId, title, image, author, description }) => {
-  const $formContainer = $('#form-wrapper');
+  const $formContainer = $('#book-review-form-wrapper');
   const $bookReviewForm = bookReviewForm({ identifierId, title, image, author, description });
 
   $formContainer.html('').append($bookReviewForm);
+}
+
+const handleNewBookReview = (e) => {
+  e.preventDefault()
+  const data = new FormData($('#book-review-new-form')[0])
+  $('#modal-footer button[type="submit"]').attr('disabled', true)
+  axios({
+    method: 'POST',
+    url: '/api/my/bookreviews',
+    data
+  }).then((resp) => {
+    window.location.href = `/lightread/my/profile`
+  }).catch((err) => {
+    if (err.response.status === 401) window.location.href = '/login'
+  })
 }
 
 const handleBookReviewForm = (e) => {
@@ -251,7 +247,8 @@ $(document).ready(() => {
   $('#search-bar-container').on('submit', '#search-book-form', handleSubmit);
   $('#search-results-container').on('click', '.addtolist-btn', handleAddToReadList);
   $('#search-bar-container').on('click', '.categoryBtn', handleCategories);
-  $('#featured-books-container').on('click', '.new-book-review-btn', handleBookReviewForm);
+  $('#search-results-container').on('click', '.new-book-review-btn', handleBookReviewForm);
+  $('#newBookReviewModal').on('click', '#post-button', handleNewBookReview);
 })
 </script>
 
@@ -269,7 +266,7 @@ $(document).ready(() => {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+        <div id="book-review-form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
         </div>
       </div>
       <div class="modal-footer">
