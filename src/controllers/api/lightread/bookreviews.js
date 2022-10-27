@@ -34,6 +34,9 @@ const controllersPagesLightReadBookReviews = async () => {
       where,
       orderBy: {
         [orderBy]: sortBy
+      },
+      include: {
+        book: true
       }
     })
 

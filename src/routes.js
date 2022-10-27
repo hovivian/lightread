@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import authenticateUser from './_middlewares/authenticate-user.js'
 
 const router = Router()
 
@@ -11,21 +12,21 @@ router.delete('/api/auth/logout', (await import('./controllers/api/auth/logout.j
 router.get('/api/bookreviews', (await import('./controllers/api/lightread/bookreviews.js')).default)
 
 // API | HOMEPAGE
-router.get('/api/lightread', (await import('./controllers/api/lightread/index.js')).default)
+// router.get('/api/lightread', authenticateUser('json'), (await import('./controllers/api/lightread/index.js')).default)
 
 // API | LIBRARY
 router.get('/api/lightread/library', (await import('./controllers/api/lightread/library.js')).default)
 
 // API | MY PROFILE | AUTH REQUIRED
-router.get('/api/my/profile', (await import('./controllers/api/my/profile/show.js')).default)
+router.get('/api/my/profile', authenticateUser('json'), (await import('./controllers/api/my/profile/show.js')).default)
 
 // API |  TO-READ LIST | MY PROFILE | AUTH REQUIRED
-router.get('/api/my/profile',(await import('./controllers/api/my/toreadlist/index.js')).default)
-router.post('/api/my/toreadlist',(await import('./controllers/api/my/toreadlist/create.js')).default)
+router.get('/api/my/profile', authenticateUser('json'), (await import('./controllers/api/my/toreadlist/index.js')).default)
+router.post('/api/my/toreadlist', authenticateUser('json'), (await import('./controllers/api/my/toreadlist/create.js')).default)
 
 // API |  BOOK REVIEW | MY PROFILE | AUTH REQUIRED
-router.get('/api/my/bookreviews',(await import('./controllers/api/my/bookreviews/index.js')).default)
-router.post('/api/my/bookreviews',(await import('./controllers/api/my/bookreviews/create.js')).default)
+router.get('/api/my/bookreviews', authenticateUser('json'), (await import('./controllers/api/my/bookreviews/index.js')).default)
+router.post('/api/my/bookreviews',authenticateUser('json'), (await import('./controllers/api/my/bookreviews/create.js')).default)
 
 // API | NOT FOUND
 router.use('/api', (await import('./controllers/api/not-found.js')).default)

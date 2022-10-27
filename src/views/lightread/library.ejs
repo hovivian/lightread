@@ -21,6 +21,21 @@ const handleAddToReadList = (e) => {
   })
 }
 
+const handleNewBookReview = (e) => {
+  e.preventDefault()
+  const data = new FormData($('#book-review-new-form')[0])
+  $('#modal-footer button[type="submit"]').attr('disabled', true)
+  axios({
+    method: 'POST',
+    url: '/api/my/bookreviews',
+    data
+  }).then((resp) => {
+    window.location.href = `/my/profile`
+  }).catch((err) => {
+    if (err.response.status === 401) window.location.href = '/login'
+  })
+}
+
 const results = (books) => {
   try {
     return books.map((book) => {
@@ -32,13 +47,29 @@ const results = (books) => {
           <div class="book-img d-flex flex-column align-items-center">
           <img class="mb-3" src="${book.imgUrl}">
           <button
-            class="addtolist-btn"
+            class="addtolist-btn mb-3"
             style="width: 190px;"
             type="button"
-            data-book-id="${book.isbn}"
+            data-book-id="${book.identifierId}"
             data-book-title="${book.title}"
+            data-book-image="${book.imgUrl}"
+            data-book-author="${book.author}"
             data-book-description="${book.description}"
           >📖 Add To To-Read List</button>
+
+          <button
+            class="new-book-review-btn btn-primary"
+            style="width: 190px;"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#newBookReviewModal"
+            data-book-id="${book.identifierId}"
+            data-book-title="${book.title}"
+            data-book-image="${book.imgUrl}"
+            data-book-author="${book.author}"
+            data-book-description="${book.description}"
+            >✍️ Write Book Review
+          </button>
           </div>
 
           <div class="book-info">
@@ -67,13 +98,11 @@ const bookData = (books) => {
     let item = books.items[i];
     if (item.volumeInfo.industryIdentifiers) {
       let details = {
-        isbn: item.volumeInfo.industryIdentifiers[0].identifier,
-        id: item.id,
+        identifierId: item.volumeInfo.industryIdentifiers[0].identifier || item.volumeInfo.industryIdentifiers[1].identifier || item.id,
         title: item.volumeInfo.title || 'N/A',
         desc: item.volumeInfo.description || 'No Description',
         imgUrl: item.volumeInfo?.imageLinks?.thumbnail || '../../images/book-cover.png',
         author: item.volumeInfo?.authors?.[0] || 'N/A'
-
       }
 
       bookInfo.push(details);
@@ -138,6 +167,57 @@ const handleCategories = (e)  => {
   })
 }
 
+const bookReviewForm = ({ identifierId, title, image, author }) => {
+  return `
+  <form id="book-review-new-form">
+    <input name="identifierId" value="${identifierId}" class="d-none">
+    <input name="image" value="${image}" class="d-none">
+    <input name="author" value="${author}" class="d-none">
+    <div class="mb-3">
+      <label for="book-review-title" class="form-label">Book Title</label>
+      <input
+        id="book-review-title"
+        class="form-control"
+        name="book"
+        value="${title}"
+        disabled
+      ></input>
+      <div class="invalid-feedback"></div>
+    </div>
+    <div class="mb-3">
+      <label for="book-review-content" class="form-label">Content</label>
+      <textarea
+        id="book-review-content"
+        class="form-control"
+        name="content"
+        rows="3"
+      ></textarea>
+      <div class="invalid-feedback"></div>
+    </div>
+  </form>
+  `
+}
+
+const generateBookReviewForm = ({ identifierId, title, image, author, description }) => {
+  const $formContainer = $('#form-wrapper');
+  const $bookReviewForm = bookReviewForm({ identifierId, title, image, author, description });
+
+  $formContainer.html('').append($bookReviewForm);
+}
+
+const handleBookReviewForm = (e) => {
+  e.preventDefault()
+
+  const $elem = $(e.currentTarget)
+  const identifierId = $elem.data('book-id')
+  const title = $elem.data('book-title')
+  const image = $elem.data('book-image')
+  const author = $elem.data('book-author')
+  const description = $elem.data('book-description')
+
+  generateBookReviewForm({ identifierId, title, image, author, description });
+}
+
 const generateTitle = () => {
   return `
   <h1 class="text-center mb-3">Search The Library</h1>
@@ -171,6 +251,7 @@ $(document).ready(() => {
   $('#search-bar-container').on('submit', '#search-book-form', handleSubmit);
   $('#search-results-container').on('click', '.addtolist-btn', handleAddToReadList);
   $('#search-bar-container').on('click', '.categoryBtn', handleCategories);
+  $('#featured-books-container').on('click', '.new-book-review-btn', handleBookReviewForm);
 })
 </script>
 
@@ -178,4 +259,22 @@ $(document).ready(() => {
 <div id="pages-lightread-library" class="container mt-5 mb-5">
   <div id="search-bar-container" class="d-flex flex-column"></div>
   <div id="search-results-container"></div>
+</div>
+
+<div class="modal fade" id="newBookReviewModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create New Book Review</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="post-button" class="btn btn-primary">Post</button>
+      </div>
+    </div>
+  </div>
 </div>

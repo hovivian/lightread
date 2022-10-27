@@ -30,10 +30,61 @@ const handleNewBookReview = (e) => {
     url: '/api/my/bookreviews',
     data
   }).then((resp) => {
-    window.location.href = `/my/profile`
+    window.location.href = `/lightread/my/profile`
   }).catch((err) => {
     if (err.response.status === 401) window.location.href = '/login'
   })
+}
+
+const handleBookReviewForm = (e) => {
+  e.preventDefault()
+
+  const $elem = $(e.currentTarget)
+  const identifierId = $elem.data('book-id')
+  const title = $elem.data('book-title')
+  const image = $elem.data('book-image')
+  const author = $elem.data('book-author')
+  const description = $elem.data('book-description')
+
+  generateBookReviewForm({ identifierId, title, image, author, description });
+}
+
+const bookReviewForm = ({ identifierId, title, image, author }) => {
+  return `
+  <form id="book-review-new-form">
+    <input name="book[identifierId]" value="${identifierId}" class="d-none">
+    <input name="book[image]" value="${image}" class="d-none">
+    <input name="book[title]" value="${title}" class="d-none">
+    <input name="book[author]" value="${author}" class="d-none">
+    <div class="mb-3">
+      <label for="book-review-title" class="form-label">Book Title</label>
+      <input
+        id="book-review-title"
+        class="form-control"
+        value="${title}"
+        disabled
+      ></input>
+      <div class="invalid-feedback"></div>
+    </div>
+    <div class="mb-3">
+      <label for="book-review-content" class="form-label">Content</label>
+      <textarea
+        id="book-review-content"
+        class="form-control"
+        name="content"
+        rows="3"
+      ></textarea>
+      <div class="invalid-feedback"></div>
+    </div>
+  </form>
+  `
+}
+
+const generateBookReviewForm = ({ identifierId, title, image, author, description }) => {
+  const $formContainer = $('#form-wrapper');
+  const $bookReviewForm = bookReviewForm({ identifierId, title, image, author, description });
+
+  $formContainer.html('').append($bookReviewForm);
 }
 
 const featuredBooks = (books) => {
@@ -52,8 +103,10 @@ const featuredBooks = (books) => {
             class="addtolist-btn mb-3"
             style="width: 190px;"
             type="button"
-            data-book-id="${book.isbn}"
+            data-book-id="${book.identifierId}"
             data-book-title="${book.title}"
+            data-book-image="${book.imgUrl}"
+            data-book-author="${book.author}"
             data-book-description="${book.description}"
           >📖 Add To To-Read List</button>
 
@@ -63,7 +116,11 @@ const featuredBooks = (books) => {
             type="button"
             data-bs-toggle="modal"
             data-bs-target="#newBookReviewModal"
-            value="${book.title}"
+            data-book-id="${book.identifierId}"
+            data-book-title="${book.title}"
+            data-book-image="${book.imgUrl}"
+            data-book-author="${book.author}"
+            data-book-description="${book.description}"
             >✍️ Write Book Review
           </button>
           </div>
@@ -78,13 +135,11 @@ const bookData = (books) => {
     let item = books.items[i];
     if (item.volumeInfo.industryIdentifiers) {
       let details = {
-        isbn: item.volumeInfo.industryIdentifiers[0].identifier,
-        id: item.id,
+        identifierId: item.volumeInfo.industryIdentifiers[0].identifier || item.volumeInfo.industryIdentifiers[1].identifier || item.id,
         title: item.volumeInfo.title || 'N/A',
         desc: item.volumeInfo.description || 'No Description',
         imgUrl: item.volumeInfo?.imageLinks?.thumbnail || '../../images/book-cover.png',
         author: item.volumeInfo?.authors?.[0] || 'N/A'
-
       }
 
       bookInfo.push(details);
@@ -118,9 +173,9 @@ const generateFeaturedBooks = (books) => {
 $(document).ready(() => {
   getFeaturedBooks();
   $('#featured-books-container').on('click', '.addtolist-btn', handleAddToReadList);
-  $('#newBookReviewModal').on('click', '#post-button', handleNewBookReview)
+  $('#newBookReviewModal').on('click', '#post-button', handleNewBookReview);
+  $('#featured-books-container').on('click', '.new-book-review-btn', handleBookReviewForm);
 })
-
 </script>
 
 <%- contentFor('body') %>
@@ -153,28 +208,6 @@ $(document).ready(() => {
       </div>
       <div class="modal-body">
         <div id="form-wrapper" class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-          <form id="book-review-new-form">
-            <div class="mb-3">
-              <label for="book-review-title" class="form-label">Book Title</label>
-              <input
-                id="book-review-title"
-                class="form-control ${errors?.book && 'is-invalid'}"
-                name="book"
-                value="${book.title}"
-              ></input>
-              <div class="invalid-feedback">${errors?.book || ''}</div>
-            </div>
-            <div class="mb-3">
-              <label for="book-review-content" class="form-label">Content</label>
-              <textarea
-                id="book-review-content"
-                class="form-control ${errors?.content && 'is-invalid'}"
-                name="content"
-                rows="3"
-              ></textarea>
-              <div class="invalid-feedback">${errors?.content || ''}</div>
-            </div>
-          </form>
         </div>
       </div>
       <div class="modal-footer">

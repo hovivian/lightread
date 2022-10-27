@@ -36,12 +36,15 @@ const generateProfile = (username, email) => {
 }
 
 const bookReviews = (details) => {
+  console.log('book reviews');
+  console.log(details);
   return details.map((detail) => {
       return  `
-        <div class="book-review d-flex">
+        <div class="book-review d-flex flex-wrap">
             <h1>${detail.title}</h1>
-            <p>By ${detail.username}</p>
+            <p>By ${detail.author}</p>
             <p>Posted on ${detail.createdAt}</p>
+            <img class="featured-book-img align-items-center" src="${detail.imgUrl}" alt="book cover">
             <p>${detail.content}</p>
           </div>
         </div>
@@ -50,15 +53,20 @@ const bookReviews = (details) => {
 }
 
 const bookReviewData = (details) => {
+  console.log('book review data');
+  console.log(details);
+
   let bookReviews = [];
   for (let i = 0; i < details.length; i++) {
-    let item = details.items[i];
+    let book = details[i];
       let info = {
-        username: items.username,
-        id: item.id,
-        title: item.title,
-        content: item.content,
-        createdAt: item.createdAt
+        username: book.book.username,
+        imgUrl: book.book.image,
+        id: book.book.id,
+        title: book.book.title,
+        content: book.content,
+        createdAt: book.createdAt,
+        author: book.book.author
       }
       bookReviews.push(info);
   }
@@ -90,7 +98,11 @@ const getBookReviews = () => {
     method: 'GET',
     url: '/api/my/bookreviews'
   }).then((resp) => {
-    generateMyBookReviews(resp.data);
+    console.log('get book reviews');
+    console.log(resp.data);
+    console.log(resp.data[0]);
+    console.log(resp.data[0].book.title);
+    generateMyBookReviews(bookReviewData(resp.data));
   })
 }
 
