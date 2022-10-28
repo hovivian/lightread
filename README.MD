@@ -1,5 +1,5 @@
 # LightRead
-A website
+A website for book lovers to find books and post book reviews.
 Click <a href="https://awesome-snails-production.up.railway.app/lightread">here</a> to start browsing
 
 ## Main Features
