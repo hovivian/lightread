@@ -3,25 +3,24 @@
 <script>
 
 const handleAddToReadList = (e) => {
-  $('.featured-books-row button[type="submit"]').attr('disabled', true);
-
-  const $elem = $(e.currentTarget)
-  const identifierId = $elem.data('book-id')
-  const title = $elem.data('book-title')
-  const image = $elem.data('book-image')
-  const author = $elem.data('book-author')
-  const description = $elem.data('book-description')
+  $('.search-result button[type="submit"]').attr('disabled', true);
 
   axios({
     method: 'POST',
     url: `/api/my/toreadlist`,
     data: {
-      identifierId, title, image, author, description
-    },
+      identifierId: $(e.currentTarget).data('book-id'),
+      title: $(e.currentTarget).data('book-title'),
+      author: $(e.currentTarget).data('book-author'),
+      image: $(e.currentTarget).data('book-image')
+
+    }
   }).then((resp) => {
-    $('.featured-books-row button[type="submit"]').text('Added').addClass('added');
+    $('.search-result button[type="submit"]').text('Added').addClass('added');
+  }).catch((err) => {
+    if (err.response.status === 401) window.location.href = '/lightread/login'
   }).finally(() => {
-    $('.featured-books-row button[type="submit"]').attr('disabled', false);
+    $('.search-result button[type="submit"]').attr('disabled', false);
   })
 }
 
@@ -36,7 +35,7 @@ const handleNewBookReview = (e) => {
   }).then((resp) => {
     window.location.href = `/lightread/my/profile`
   }).catch((err) => {
-    if (err.response.status === 401) window.location.href = '/login'
+    if (err.response.status === 401) window.location.href = '/lightread/login'
   })
 }
 

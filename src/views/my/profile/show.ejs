@@ -2,18 +2,20 @@
 <%- contentFor('scripts') %>
 <script>
 
-// const generateMyToReadList = (books) => {
-//   return `
-//         <div class="bg-primary">
-//           <h2 class="text-center">To-read List</h2>
-//           <div id="toreadlist-section" class="">
-//             <ul id="toreadlist">
-//               <li>${book.title}li>
-//             </ul>
-//           </div>
-//         </div>
-//   `
-// }
+const generateMyToReadList = (books) => {
+  books.forEach((book)=> {
+    return  `
+      <div class="bg-primary">
+        <h2 class="text-center">To-read List</h2>
+          <div id="toreadlist-section" class="">
+            <ul id="toreadlist">
+              <li><input type="checkbox">${book.title}<li>
+            </ul>
+          </div>
+      </div>
+      `
+  });
+}
 
 const generateTitle = () => {
   return `

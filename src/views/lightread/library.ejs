@@ -15,7 +15,7 @@ const handleAddToReadList = (e) => {
   }).then((resp) => {
     $('.search-result button[type="submit"]').text('Added').addClass('added');
   }).catch((err) => {
-    if (err.response.status === 401) window.location.href = '/login'
+    if (err.response.status === 401) window.location.href = '/lightread/login'
   }).finally(() => {
     $('.search-result button[type="submit"]').attr('disabled', false);
   })
@@ -83,6 +83,7 @@ const bookData = (books) => {
     if (item.volumeInfo.industryIdentifiers) {
       let details = {
         identifierId: item.volumeInfo.industryIdentifiers[0].identifier || item.volumeInfo.industryIdentifiers[1].identifier || item.id,
+        id: item.id,
         title: item.volumeInfo.title || 'N/A',
         desc: item.volumeInfo.description || 'No Description',
         imgUrl: item.volumeInfo?.imageLinks?.thumbnail || '../../images/book-cover.png',
@@ -197,7 +198,7 @@ const handleNewBookReview = (e) => {
   }).then((resp) => {
     window.location.href = `/lightread/my/profile`
   }).catch((err) => {
-    if (err.response.status === 401) window.location.href = '/login'
+    if (err.response.status === 401) window.location.href = '/lightread/login'
   })
 }
 
