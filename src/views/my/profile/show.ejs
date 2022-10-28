@@ -22,8 +22,6 @@ const generateProfile = (username, email) => {
 }
 
 const bookReviews = (details) => {
-  console.log('book reviews');
-  console.log(details);
   return details.map((detail) => {
     let shortenText = detail.content.substring(0, 250);
       return  `
@@ -77,16 +75,11 @@ const toReadListData = (details) => {
 }
 
 const toReadList = (details) => {
-  console.log('to read list');
-  console.log(details);
   return details.map((detail)=> {
     return  `
-      <div class="bg-primary">
-        <h2 class="text-center">To-read List</h2>
+      <div class="">
           <div id="toreadlist-section" class="">
-            <ul id="toreadlist">
-              <li><input type="checkbox">${detail.title}<li>
-            </ul>
+          <input type="checkbox" id="to-read-list-checkbox"> ${detail.title}
           </div>
       </div>
       `
@@ -155,8 +148,9 @@ $(document).ready(() => {
 <div id="pages-my-profile-show" class="container mt-5 mb-5 d-flex justify-content-around">
   <div id="profile-left-container" class="col-3">
     <div id="profile-container" class=""></div>
-    <div id="my-to-read-list-container">
+    <div id="my-to-read-list">
       <h2 class="text-center">My Reading List</h2>
+      <div id="my-to-read-list-container"></div>
     </div>
   </div>
   <div id="profile-right-container" class="col-8 p-3">

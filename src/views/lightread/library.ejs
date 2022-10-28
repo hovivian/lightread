@@ -8,9 +8,11 @@ const handleAddToReadList = (e) => {
     method: 'POST',
     url: `/api/my/toreadlist`,
     data: {
-      bookId: $(e.currentTarget).data('book-id'),
-      title: $(e.currentTarget).data('title'),
-      description: $(e.currentTarget).data('description'),
+      identifierId: $(e.currentTarget).data('book-id'),
+      title: $(e.currentTarget).data('book-title'),
+      author: $(e.currentTarget).data('book-author'),
+      image: $(e.currentTarget).data('book-image')
+
     }
   }).then((resp) => {
     $('.search-result button[type="submit"]').text('Added').addClass('added');
