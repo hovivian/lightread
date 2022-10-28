@@ -39,6 +39,7 @@ router.get('/lightread/login', (await import('./controllers/pages/auth/login.js'
 router.get('/lightread/bookreviews', (await import('./controllers/pages/lightread/bookreviews.js')).default)
 
 // PAGES | HOMEPAGE
+router.get('/', (req, res) => res.redirect('/lightread'))
 router.get('/lightread', (await import('./controllers/pages/lightread/index.js')).default)
 
 // PAGES | LIBRARY
