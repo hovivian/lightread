@@ -1,22 +1,6 @@
 <%- contentFor('styles') %>
 <%- contentFor('scripts') %>
 <script>
-
-const generateMyToReadList = (books) => {
-  books.forEach((book)=> {
-    return  `
-      <div class="bg-primary">
-        <h2 class="text-center">To-read List</h2>
-          <div id="toreadlist-section" class="">
-            <ul id="toreadlist">
-              <li><input type="checkbox">${book.title}<li>
-            </ul>
-          </div>
-      </div>
-      `
-  });
-}
-
 const generateTitle = () => {
   return `
   <h2 class="text-center">My profile</h2>
@@ -38,7 +22,8 @@ const generateProfile = (username, email) => {
 }
 
 const bookReviews = (details) => {
-
+  console.log('book reviews');
+  console.log(details);
   return details.map((detail) => {
     let shortenText = detail.content.substring(0, 250);
       return  `
@@ -79,6 +64,42 @@ const bookReviewData = (details) => {
   return bookReviews;
 }
 
+const toReadListData = (details) => {
+  let toReadList = [];
+  for (let i = 0; i < details.books.length; i++) {
+    let book = details.books[i];
+      let info = {
+        title: book.title
+      }
+      toReadList.push(info);
+  }
+  return toReadList;
+}
+
+const toReadList = (details) => {
+  console.log('to read list');
+  console.log(details);
+  return details.map((detail)=> {
+    return  `
+      <div class="bg-primary">
+        <h2 class="text-center">To-read List</h2>
+          <div id="toreadlist-section" class="">
+            <ul id="toreadlist">
+              <li><input type="checkbox">${detail.title}<li>
+            </ul>
+          </div>
+      </div>
+      `
+    }).join('');
+}
+
+const generateMyToReadList = (details) => {
+  const $myToReadListContainer = $('#my-to-read-list-container')
+  const $myToReadList = toReadList(details);
+
+  $myToReadListContainer.html('').append($myToReadList);
+}
+
 const generateMyBookReviews = (details) => {
   const $myBookReviewsContainer = $('#my-book-review-container')
   const $myBookReviews = bookReviews(details);
@@ -100,9 +121,7 @@ const getToReadList = () => {
     method: 'GET',
     url: '/api/my/toreadlist'
   }).then((resp) => {
-    console.log('get to read list');
-    console.log(resp.data);
-    // generatePage(resp)
+    generateMyToReadList(toReadListData(resp.data));
   })
 }
 
@@ -122,11 +141,6 @@ const generatePage = (username, email) => {
   const $profile = generateProfile(username, email);
 
   $profileBody.html('').append($title).append($profile);
-
-  // const $myToReadListContainer = $('#my-to-read-list-container')
-  // const $myToReadList = generateMyToReadList();
-
-  // $myToReadListContainer.html('').append($myToReadList);
 }
 
 $(document).ready(() => {
@@ -134,7 +148,6 @@ $(document).ready(() => {
   getProfile();
   getBookReviews();
   getToReadList();
-
 })
 </script>
 

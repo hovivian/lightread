@@ -18,7 +18,7 @@ router.get('/api/lightread/library', (await import('./controllers/api/lightread/
 router.get('/api/my/profile', authenticateUser('json'), (await import('./controllers/api/my/profile/show.js')).default)
 
 // API |  TO-READ LIST | MY PROFILE | AUTH REQUIRED
-router.get('/api/my/profile', authenticateUser('json'), (await import('./controllers/api/my/toreadlist/index.js')).default)
+router.get('/api/my/toreadlist', authenticateUser('json'), (await import('./controllers/api/my/toreadlist/index.js')).default)
 router.post('/api/my/toreadlist', authenticateUser('json'), (await import('./controllers/api/my/toreadlist/create.js')).default)
 
 // API |  BOOK REVIEW | MY PROFILE | AUTH REQUIRED
