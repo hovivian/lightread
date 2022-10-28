@@ -77,11 +77,9 @@ const toReadListData = (details) => {
 const toReadList = (details) => {
   return details.map((detail)=> {
     return  `
-      <div class="">
-          <div id="toreadlist-section" class="">
-          <input type="checkbox" id="to-read-list-checkbox"> ${detail.title}
+          <div class="toreadlist-section" class="">
+          <input type="checkbox" class="to-read-list-checkbox"> ${detail.title}
           </div>
-      </div>
       `
     }).join('');
 }
@@ -146,17 +144,22 @@ $(document).ready(() => {
 
 <%- contentFor('body') %>
 <div id="pages-my-profile-show" class="container mt-5 mb-5 d-flex justify-content-around">
+
   <div id="profile-left-container" class="col-3">
-    <div id="profile-container" class=""></div>
+    <div id="profile-container"></div>
     <div id="my-to-read-list">
+    <div class="to-read-list-header mb-3">
       <h2 class="text-center">My Reading List</h2>
+    </div>
       <div id="my-to-read-list-container"></div>
     </div>
   </div>
+
   <div id="profile-right-container" class="col-8 p-3">
     <div class="book-review-header mb-3">
       <h2 class="text-center">My Book Reviews</h2>
     </div>
     <div id="my-book-review-container" class="d-flex flex-wrap justify-content-around"></div>
   </div>
+
 </div>

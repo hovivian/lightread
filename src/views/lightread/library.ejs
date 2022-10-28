@@ -12,10 +12,9 @@ const handleAddToReadList = (e) => {
       title: $(e.currentTarget).data('book-title'),
       author: $(e.currentTarget).data('book-author'),
       image: $(e.currentTarget).data('book-image')
-
     }
   }).then((resp) => {
-    $('.search-result button[type="submit"]').text('Added').addClass('added');
+    window.location.href = `/lightread/my/profile`;
   }).catch((err) => {
     if (err.response.status === 401) window.location.href = '/lightread/login'
   }).finally(() => {
